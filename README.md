@@ -75,7 +75,7 @@ The web server (flask) and ledstrip connection on the rpi are made with Python3.
     - https://www.raspberrypi.org/
 
 # Liscense
-MIT
+![GitHub](https://img.shields.io/github/license/maxthom/game-boulette-v2?style=flat-square)
 
 # RoadMap
 *September 2021*
