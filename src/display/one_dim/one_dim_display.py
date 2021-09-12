@@ -20,11 +20,13 @@ class OneDimDisplay(Thread):
         while True:
             next_frame = None
             while not self.q_frame.empty():
-                next_frame = self.q_frame.get()            
-                self.process_frame(next_frame)
+                try:
+                    next_frame = self.q_frame.get()            
+                    self.process_frame(next_frame)
+                except Exception as e: 
+                    print("Unkown error: " + e)
 
     def process_frame(self, next_frame):
-        #print("> Receiving frame")
         frame = [None] * len(next_frame)
         for i, row in enumerate(next_frame):
             if type(row).__name__ == 'tuple' or type(row).__name__ == 'NoneType':
@@ -37,7 +39,6 @@ class OneDimDisplay(Thread):
         self.display_frame(frame)
     
     def display_frame(self, frame):
-        #print("> Displaying frame")
         for i, led in enumerate(frame):
             if led != None:
                 if len(led) == 4:
