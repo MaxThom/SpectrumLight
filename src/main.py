@@ -47,22 +47,105 @@ class Main:
         
         command = {
             "command": "segment",
-            "start_index": 0,
-            "end_index": 144
+            "segments": [
+                (0, 17),
+                (18, 35),
+                (36, 53),
+                (54, 71),
+                (72, 89),
+                (90, 107),
+                (108, 125),
+                (126, 143)
+            ],            
         }
         self.q_command.put(command)
         command = {
             "command": "animation",
-            "segment": 0
+            "name": "color_wipe",
+            "segment": 0,
+            "configuration": {
+                "color": (0, 255,0),
+                "wait_ms": 50,
+                "reverse": True
+            }
+        }
+        self.q_command.put(command)
+        command = {
+            "command": "animation",
+            "name": "rainbow_cycle",
+            "segment": 1,
+            "configuration": {
+                "wait_ms": 50
+            }
+        }
+        self.q_command.put(command)
+        command = {
+            "command": "animation",
+            "name": "color_wipe",
+            "segment": 2,
+            "configuration": {
+                "color": (255, 0, 0),
+                "wait_ms": 50,
+                "reverse": False
+            }
+        }
+        self.q_command.put(command)
+        command = {
+            "command": "animation",
+            "name": "rainbow_cycle",
+            "segment": 3,
+            "configuration": {
+                "wait_ms": 50
+            }
+        }
+        self.q_command.put(command)
+        command = {
+            "command": "animation",
+            "name": "color_wipe",
+            "segment": 4,
+            "configuration": {
+                "color": (0, 0 ,255),
+                "wait_ms": 50,
+                "reverse": False
+            }
+        }
+        self.q_command.put(command)
+        command = {
+            "command": "animation",
+            "name": "rainbow_cycle",
+            "segment": 5,
+            "configuration": {
+                "wait_ms": 50
+            }
+        }
+        self.q_command.put(command)
+        command = {
+            "command": "animation",
+            "name": "color_wipe",
+            "segment": 6,
+            "configuration": {
+                "color": (0, 0, 0, 255),
+                "wait_ms": 50,
+                "reverse": False
+            }
+        }
+        self.q_command.put(command)
+        command = {
+            "command": "animation",
+            "name": "rainbow_cycle",
+            "segment": 7,
+            "configuration": {
+                "wait_ms": 50
+            }
         }
         self.q_command.put(command)
 
-        #self.q_frame.put([(0, 0, 0)] * constants.LED_COUNT)
-        #for i in range(constants.LED_COUNT):
-        #    frame = [None] * constants.LED_COUNT
-        #    frame[i] = (0, 0, 255)
-        #    self.q_frame.put(frame)
-        #    time.sleep(50 / 1000.0)
+     #self.q_frame.put([(0, 0, 0)] * constants.LED_COUNT)
+     #for i in range(constants.LED_COUNT):
+     #    frame = [None] * constants.LED_COUNT
+     #    frame[i] = (0, 0, 255)
+     #    self.q_frame.put(frame)
+     #    time.sleep(50 / 1000.0)
 
 
         self.app.run(host='0.0.0.0', port=80)

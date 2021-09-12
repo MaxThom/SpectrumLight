@@ -16,7 +16,7 @@ class OneDimDisplay(Thread):
     # Receive frame
     def run(self):
         print('Started one dimension display thread')
-        time.sleep(constants.TH_PRIORITY_HIGH)
+        #time.sleep(constants.TH_PRIORITY_HIGH)
         while True:
             next_frame = None
             while not self.q_frame.empty():

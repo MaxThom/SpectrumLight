@@ -33,24 +33,51 @@ class OneDimProcess(Thread):
     def process_command(self, cmd):
         print("> Command " + cmd["command"])
         if cmd["command"] == anim_constants.SEGMENT:
-            #self.onGoingAnim = []
-            #self.cancelAnim = []
-            #self.segments = []
-            self.segments.append((cmd["start_index"], cmd["end_index"]))            
-            self.onGoingThread.append(None)
-            self.cancelThread.append(False)
-            self.onGoingAnim.append(OneDimAnim(self.strip, self.q_frame, lambda: self.cancelThread[0], cmd["start_index"], cmd["end_index"]))
-        else:
+            self.command_segment(cmd)            
+        elif  cmd["command"] == anim_constants.ANIMATION:
+            anim = cmd["name"]
             segment = cmd["segment"]
-            if (self.onGoingThread[segment] != None):
-                self.cancelThread[segment] = True
-                self.onGoingThread[segment].join()
-                self.cancelThread[segment] = False
-            self.onGoingAnim = Thread(target=self.onGoingAnim[segment].color_wipe, args=((0,0,255), 50))
-            self.onGoingAnim.start()
+            config = cmd["configuration"]
+            self.join_thread(segment)
+            #class_method = getattr(OneDimAnim, "color_wipe")
+            #result = class_method(self.onGoingAnim[segment])
+
+            #self.onGoingThread[segment] = Thread(target=self.onGoingAnim[segment].color_wipe, args=((0,0,255), 50))
+            #self.onGoingThread[segment] = Thread(target=self.onGoingAnim[segment].rainbow_cycle, args=(0.005,))
+            self.onGoingThread[segment] = Thread(target=getattr(self.onGoingAnim[segment], anim), args=(config,))
+            self.onGoingThread[segment].start()
             #time.sleep(3)
             #self.cancelThread[0] = True
  
+    def command_segment(self, cmd):
+        # Join all thread
+        self.join_all_threads()
+        # Init arrays
+        self.onGoingAnim = []
+        self.onGoingThread = []
+        self.cancelThread = []
+        self.segments = []
+        # Create segments
+        for i, segment in enumerate(cmd["segments"]):
+            self.segments.append((segment[0], segment[1]))            
+            self.onGoingThread.append(None)
+            self.cancelThread.append(False)
+            self.onGoingAnim.append(OneDimAnim(self.strip, self.q_frame, lambda: self.cancelThread[i], segment[0], segment[1]))
+
+    def join_all_threads(self):
+        for th in self.cancelThread:
+            th = True
+        for th in self.onGoingThread:
+            if (th != None):                
+                th.join()
+        for th in self.cancelThread:
+            th = False
+
+    def join_thread(self, index):
+        if (self.onGoingThread[index] != None):
+            self.cancelThread[index] = True
+            self.onGoingThread[index].join()
+            self.cancelThread[index] = False
 
 #commandAnimation = {
 #    anim_constants.CLEAR: command_add_wifi,
