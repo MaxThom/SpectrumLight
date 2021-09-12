@@ -35,18 +35,22 @@ class OneDimProcess(Thread):
     def process_command(self, cmd):
         print("> Command " + cmd["command"])
         if cmd["command"] == anim_constants.SEGMENT:
-            self.command_segment(cmd)            
+            self.command_segment(cmd)
         elif cmd["command"] == anim_constants.ANIMATION:
             anim = cmd["name"]
             segment = cmd["segment"]
             config = cmd["configuration"]
             self.join_thread(segment)
+            print("TERNATED")
+            with self.q_frame.mutex:
+                self.q_frame.queue.clear()
             self.onGoingThread[segment] = Thread(target=getattr(self.onGoingAnim[segment], anim), args=(config,))
             self.onGoingThread[segment].start()            
  
     def command_segment(self, cmd):
         # Join all thread
         self.join_all_threads()
+        print("TERMINATED")
         # Init arrays
         self.onGoingAnim = []
         self.onGoingThread = []
