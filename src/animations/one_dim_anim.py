@@ -13,9 +13,8 @@ class OneDimAnim:
         self.length = self.end_index - self.start_index + 1
 
     def __send_frame(self, frame):
-        full_frame = [None] * (self.start_index) + frame + [None] * (self.display.get_num_pixels() - self.end_index)
-        #print(full_frame)
-        self.display.send_frame(full_frame)
+        #print(frame)
+        self.display.send_frame(self.start_index, frame)
 
     def clear(self, args):
         self.__send_frame(utils.get_colorless_array(self.length))

@@ -19,7 +19,7 @@ def set_dependencies(p_q_command, p_display):
   q_command = p_q_command
   display = p_display
 
-@animation_bp.route('/animation/')
+@animation_bp.route('/animation/', strict_slashes=False)
 def get_animation():
   rtn = {}
   try:
@@ -41,7 +41,7 @@ def get_animation():
   pprint.pprint(rtn)
   return jsonify(rtn)
 
-@animation_bp.route('/brightness/', methods=["POST", "GET"])
+@animation_bp.route('/brightness/', methods=["POST", "GET"], strict_slashes=False)
 def set_brightness():
   rtn = {}
   if request.method == "POST":
@@ -72,7 +72,7 @@ def set_brightness():
   pprint.pprint(rtn)
   return jsonify(rtn)
 
-@animation_bp.route('/configuration/', methods=["POST", "GET"])
+@animation_bp.route('/configuration/', methods=["POST", "GET"], strict_slashes=False)
 def get_config():
   rtn = {}
   if request.method == "POST":

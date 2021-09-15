@@ -80,13 +80,13 @@ class OneDimDisplay:
         return self.strip.getPixelColorRGB(index)
 
     # Receive frame
-    def send_frame(self, next_frame):        
+    def send_frame(self, index, next_frame):        
         try:
-            self.__process_frame(next_frame)
+            self.__process_frame(index, next_frame)
         except Exception as e: 
             print("Unkown error: " + e)
 
-    def __process_frame(self, next_frame):
+    def __process_frame(self, index, next_frame):
         frame = [None] * len(next_frame)
         for i, row in enumerate(next_frame):
             if type(row).__name__ == 'tuple' or type(row).__name__ == 'NoneType':
@@ -96,13 +96,13 @@ class OneDimDisplay:
                     if column != None or j == len(row)-1:
                         frame[i] = column
                         break
-        self.__display_frame(frame)
+        self.__display_frame(index, frame)
     
-    def __display_frame(self, frame):
+    def __display_frame(self, index, frame):
         for i, led in enumerate(frame):
             if led != None:
                 if len(led) == 4:
-                    self.strip.setPixelColor(i, Color(led[0], led[1], led[2], led[3]))
+                    self.strip.setPixelColor(i+index, Color(led[0], led[1], led[2], led[3]))
                 else:    
-                    self.strip.setPixelColor(i, Color(led[0], led[1], led[2], 0))
+                    self.strip.setPixelColor(i+index, Color(led[0], led[1], led[2], 0))
         self.strip.show()
