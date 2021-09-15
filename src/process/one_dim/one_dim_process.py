@@ -42,6 +42,8 @@ class OneDimProcess(Thread):
             anim = cmd["name"]
             segment = cmd["segment"]
             config = cmd["configuration"]
+            if segment >= len(onGoingAnim):
+                return
             self.join_thread(segment)
             print("TERNATED")            
             self.onGoingThread[segment] = Thread(target=getattr(self.onGoingAnim[segment], anim), args=(config,))
