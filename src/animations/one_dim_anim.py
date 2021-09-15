@@ -1,23 +1,21 @@
-  
 import time
 import math
 import animations.array_utils as utils
-from rpi_ws281x import Color, PixelStrip, ws
+from display.one_dim.one_dim_display import OneDimDisplay
 from random import *
 
 class OneDimAnim:
-    def __init__(self, p_strip, p_q_frame, p_segment):
-        self.strip = p_strip
-        self.q_frame = p_q_frame
+    def __init__(self, p_display, p_segment):
+        self.display = p_display
         self.isCancelled = False
         self.start_index = p_segment[0]
         self.end_index = p_segment[1]
         self.length = self.end_index - self.start_index + 1
 
     def __send_frame(self, frame):
-        full_frame = [None] * (self.start_index) + frame + [None] * (self.strip.numPixels() - self.end_index)
+        full_frame = [None] * (self.start_index) + frame + [None] * (self.display.get_num_pixels() - self.end_index)
         #print(full_frame)
-        self.q_frame.put(full_frame)
+        self.display.send_frame(full_frame)
 
     def clear(self, args):
         self.__send_frame(utils.get_colorless_array(self.length))
