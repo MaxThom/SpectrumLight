@@ -5,10 +5,9 @@ from flask import Flask, request, jsonify
 
 from hotspot.hotspot import hotspot_bp
 from api.animation_controller import animation_bp, set_dependencies
-from display.one_dim.one_dim_display import OneDimDisplay
-from process.one_dim.one_dim_process import OneDimProcess
+from display.one_dim_display import OneDimDisplay
+from process.one_dim_process import OneDimProcess
 from queue import PriorityQueue
-import animation as anim
 import constants as constants
 
 class Main:

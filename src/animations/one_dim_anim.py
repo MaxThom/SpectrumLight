@@ -1,7 +1,7 @@
 import time
 import math
 import animations.array_utils as utils
-from display.one_dim.one_dim_display import OneDimDisplay
+from display.one_dim_display import OneDimDisplay
 from random import *
 
 class OneDimAnim:

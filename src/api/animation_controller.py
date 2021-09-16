@@ -1,6 +1,6 @@
 
 from flask import Blueprint, request, jsonify, render_template
-from display.one_dim.one_dim_display import OneDimDisplay
+from display.one_dim_display import OneDimDisplay
 import queue
 import api.constants as constants
 import api.utils as utils
