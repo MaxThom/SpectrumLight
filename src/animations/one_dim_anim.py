@@ -1,23 +1,18 @@
 import time
 import math
 import animations.array_utils as utils
-from display.one_dim_display import OneDimDisplay
+from animations.anim import __Anim
 from random import *
 
-class OneDimAnim:
+class OneDimAnim(__Anim):
     def __init__(self, p_display, p_segment):
-        self.display = p_display
-        self.isCancelled = False
+        super().__init__(p_display, p_segment)
         self.start_index = p_segment[0]
         self.end_index = p_segment[1]
         self.length = self.end_index - self.start_index + 1
 
-    def __send_frame(self, frame):
-        #print(frame)
-        self.display.send_frame(self.start_index, frame)
-
     def clear(self, args):
-        self.__send_frame(utils.get_colorless_array(self.length))
+        self._send_frame(utils.get_colorless_array(self.length))
 
     #
     # Args: color, wait_ms, reverse
@@ -37,7 +32,7 @@ class OneDimAnim:
                 frame = utils.get_void_array(self.length)
                 frame[i] = color
             
-                self.__send_frame(frame)
+                self._send_frame(frame)
                 if (self.isCancelled):
                     return
                 time.sleep(wait_ms / 1000.0)
@@ -55,7 +50,7 @@ class OneDimAnim:
                     frame[i] = self.wheel(((i * 256 // self.length) + j) % 256)
                 if (self.isCancelled):
                     return
-                self.__send_frame(frame)
+                self._send_frame(frame)
                 if wait_ms > 0:
                     time.sleep(wait_ms)
                 if (self.isCancelled):

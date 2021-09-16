@@ -2,10 +2,12 @@ import time
 from threading import Thread
 from queue import PriorityQueue
 import constants as constants
-import process.constants as anim_constants
 from animations.one_dim_anim import OneDimAnim
 
-class OneDimProcess(Thread):
+SEGMENT="segment"
+ANIMATION="animation"
+
+class ProcessManagers(Thread):
     def __init__(self, p_q_command, p_display):
         Thread.__init__(self)
         self.display = p_display
@@ -15,7 +17,8 @@ class OneDimProcess(Thread):
         self.segments = []
     
     def __del__(self):
-        print("Goodbye one dimension !")
+        self.join_all_threads()
+        print("TERMINATED")
 
     # Receive command
     def run(self):
@@ -31,9 +34,9 @@ class OneDimProcess(Thread):
 
     def process_command(self, cmd):
         print("> Command " + cmd["command"])
-        if cmd["command"] == anim_constants.SEGMENT:
+        if cmd["command"] == SEGMENT:
             self.command_segment(cmd)
-        elif cmd["command"] == anim_constants.ANIMATION:
+        elif cmd["command"] == ANIMATION:
             anim = cmd["name"]
             segment = cmd["segment"]
             config = cmd["configuration"]
@@ -56,7 +59,7 @@ class OneDimProcess(Thread):
         for i, segment in enumerate(cmd["segments"]):
             self.segments.append((segment[0], segment[1]))            
             self.onGoingThread.append(None)
-            self.onGoingAnim.append(OneDimAnim(self.display, (segment[0], segment[1])))
+            self.onGoingAnim.append(self.create_animation_for_display(self.display, (segment[0], segment[1])))
 
     def join_all_threads(self):
         for th in self.onGoingAnim:
@@ -72,3 +75,8 @@ class OneDimProcess(Thread):
             self.onGoingAnim[index].isCancelled = True
             self.onGoingThread[index].join()
             self.onGoingAnim[index].isCancelled = False
+    
+    def create_animation_for_display(self, display, segment):
+        if type(display).__name__ == "OneDimDisplay":
+            return OneDimAnim(display, segment)
+        return None

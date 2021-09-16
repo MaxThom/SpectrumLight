@@ -6,7 +6,7 @@ from flask import Flask, request, jsonify
 from hotspot.hotspot import hotspot_bp
 from api.animation_controller import animation_bp, set_dependencies
 from display.one_dim_display import OneDimDisplay
-from process.one_dim_process import OneDimProcess
+from services.process_manager import ProcessManagers
 from queue import PriorityQueue
 import constants as constants
 
@@ -19,7 +19,7 @@ class Main:
 
         self.q_command = queue.Queue()        
         self.display = OneDimDisplay()
-        self.process_th = OneDimProcess(self.q_command, self.display)
+        self.process_th = ProcessManagers(self.q_command, self.display)
         set_dependencies(self.q_command, self.display)
     
     def __del__(self):
