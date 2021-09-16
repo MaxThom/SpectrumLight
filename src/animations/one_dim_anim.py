@@ -50,9 +50,9 @@ class OneDimAnim(__Anim):
     # Args: color, wait_ms, reverse
     #
     def color_wipe(self, args):
-        color = utils.array_to_tuple(args["color"])
-        wait_ms = args["wait_ms"]
-        reverse = args["reverse"]
+        color = utils.array_to_tuple(args["color"]) if "color" in args else (0,0,0,255)
+        wait_ms = args["wait_ms"] if "wait_ms" in args else 0.05
+        reverse = args["reverse"] if "reverse" in args else False
         start = 0 if not reverse else self.length-1
         end = -1 if reverse else self.length
         step = 1 if not reverse else -1
@@ -73,7 +73,7 @@ class OneDimAnim(__Anim):
     # Args: wait_ms
     #
     def rainbow_cycle(self, args):
-        wait_ms = args["wait_ms"]
+        wait_ms = args["wait_ms"] if "wait_ms" in args else 0.05
         self.clear(None)
         while True:
             for j in range(256): # one cycle of all 256 colors in the wheel
@@ -90,11 +90,11 @@ class OneDimAnim(__Anim):
 
     def labyrinth(self, args):
         # Init arguments
-        wait_ms = args["wait_me"] if "wait_me" in args else 0.05
-        count = args["count"] if "count" in args else 5
+        wait_ms = args["wait_ms"] if "wait_ms" in args else 0.05
+        count = args["count"] if "count" in args else 10
         turn_chance = args["turn_chance"] if "turn_chance" in args else 2
         color = utils.array_to_tuple(args["color"]) if "color" in args else (0,0,0,255)
-        contact_color = utils.array_to_tuple(args["contact_color"]) if "contact_color" in args else (0, 127, 127, 127)
+        contact_color = utils.array_to_tuple(args["contact_color"]) if "contact_color" in args else (127, 127, 127, 0)
 
         self.clear(None)
         points = []
@@ -136,7 +136,6 @@ class OneDimAnim(__Anim):
                     points_contact[key] = 1
             for key in list(points_contact.keys()):
                 value = points_contact[key]
-                print(key)
                 frame[key] = (int(contact_color[0]*value), int(contact_color[1]*value), int(contact_color[2]*value), int(contact_color[3]*value))
                 points_contact[key] = round(points_contact[key]-0.05, 2)
                 if (points_contact[key]  < 0):
