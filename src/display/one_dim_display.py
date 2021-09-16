@@ -16,15 +16,16 @@ class OneDimDisplay(__Display):
             print("Unkown error: " + e)
 
     def __process_frame(self, index, next_frame):
-        frame = [None] * len(next_frame)
-        for i, row in enumerate(next_frame):
-            if type(row).__name__ == 'tuple' or type(row).__name__ == 'NoneType':
-                frame[i] = row
-            else:
-                for j, column in enumerate(row):
-                    if column != None or j == len(row)-1:
+        frame = None
+        if type(next_frame[0]).__name__ == "list":
+            frame = [None] * len(next_frame[0])
+            for i, row in enumerate(zip(*next_frame)):
+                for column in row:
+                    if column != None:
                         frame[i] = column
                         break
+        else:
+            frame = next_frame
         self.__display_frame(index, frame)
     
     def __display_frame(self, index, frame):

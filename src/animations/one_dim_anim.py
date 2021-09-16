@@ -12,7 +12,39 @@ class OneDimAnim(__Anim):
         self.length = self.end_index - self.start_index + 1
 
     def clear(self, args):
-        self._send_frame(utils.get_colorless_array(self.length))
+        self._send_frame(utils.get_colorless_array_1d(self.length))
+
+    #
+    # Args: color, wait_ms, reverse
+    #
+    def test(self, args):
+        frame = utils.get_void_array_1d(self.length, (0, 0, 255))
+        frame = utils.add_void_layer_1d(frame)
+        frame[0][5] = (255, 0, 0)
+        frame[0][10] = (255, 0, 0)
+        frame[0][15] = (255, 0, 0)
+        frame[0][20] = (255, 0, 0)
+        frame[0][25] = (255, 0, 0)
+        frame[0][30] = (255, 0, 0)
+        frame[0][35] = (255, 0, 0)
+        frame[0][40] = (255, 0, 0)
+        frame[0][45] = (255, 0, 0)
+        frame[0][50] = (255, 0, 0)
+        frame[0][55] = (255, 0, 0)
+        frame[0][60] = (255, 0, 0)
+        frame[0][65] = (255, 0, 0)
+        frame[0][70] = (255, 0, 0)
+        frame[0][75] = (255, 0, 0)
+        frame = utils.add_void_layer_1d(frame)
+        frame[0][5] =  (0, 255, 0)
+        frame[0][15] = (0, 255, 0)
+        frame[0][25] = (0, 255, 0)
+        frame[0][35] = (0, 255, 0)
+        frame[0][45] = (0, 255, 0)
+        frame[0][55] = (0, 255, 0)
+        frame[0][65] = (0, 255, 0)
+        frame[0][75] = (0, 255, 0)
+        self._send_frame(frame)
 
     #
     # Args: color, wait_ms, reverse
@@ -29,7 +61,7 @@ class OneDimAnim(__Anim):
         while True:
             self.clear(None)
             for i in range(start, end, step):
-                frame = utils.get_void_array(self.length)
+                frame = utils.get_void_array_1d(self.length)
                 frame[i] = color
             
                 self._send_frame(frame)
@@ -45,7 +77,7 @@ class OneDimAnim(__Anim):
         self.clear(None)
         while True:
             for j in range(256): # one cycle of all 256 colors in the wheel
-                frame = utils.get_void_array(self.length)
+                frame = utils.get_void_array_1d(self.length)
                 for i in range(self.length):
                     frame[i] = self.wheel(((i * 256 // self.length) + j) % 256)
                 if (self.isCancelled):
