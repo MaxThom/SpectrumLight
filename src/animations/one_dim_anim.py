@@ -87,6 +87,66 @@ class OneDimAnim(__Anim):
                     time.sleep(wait_ms)
                 if (self.isCancelled):
                     return
+
+    def labyrinth(self, args):
+        # Init arguments
+        wait_ms = args["wait_me"] if "wait_me" in args else 0.05
+        count = args["count"] if "count" in args else 5
+        turn_chance = args["turn_chance"] if "turn_chance" in args else 2
+        color = utils.array_to_tuple(args["color"]) if "color" in args else (0,0,0,255)
+        contact_color = utils.array_to_tuple(args["contact_color"]) if "contact_color" in args else (0, 127, 127, 127)
+
+        self.clear(None)
+        points = []
+        points_location = {}
+        points_contact = {}
+        for i in range(count):
+            start = randint(0, self.length)
+            velocity = randint(0, 1)
+            if (velocity == 0):
+                velocity = -1
+            points.append(utils.Point(start, velocity))
+
+        while (not self.isCancelled):
+            frame = utils.get_void_array_1d(self.length)
+            for i in range(len(points)):
+                if (self.isCancelled):
+                    return
+                # Clear
+                if (not points[i].x in points_contact):
+                    frame[points[i].x] = (0, 0, 0, 0)
+                # Next move
+                velocity = randint(0, 100)
+                if (velocity <= turn_chance):
+                    points[i].x_v *= -1
+                points[i].x += points[i].x_v
+                points[i].x %= self.length-1
+                if points[i].x in points_location:
+                    points_location[points[i].x] += 1
+                else:
+                    points_location[points[i].x] = 1
+                if points[i].x+points[i].x_v in points_location:
+                    points_location[points[i].x+points[i].x_v] += 1
+                else:
+                    points_location[points[i].x+points[i].x_v] = 1
+                # Show            
+                frame[points[i].x] = (color[0], color[1], color[2], color[3])
+            for key, value in points_location.items():
+                if (value > 1):
+                    points_contact[key] = 1
+            for key in list(points_contact.keys()):
+                value = points_contact[key]
+                print(key)
+                frame[key] = (int(contact_color[0]*value), int(contact_color[1]*value), int(contact_color[2]*value), int(contact_color[3]*value))
+                points_contact[key] = round(points_contact[key]-0.05, 2)
+                if (points_contact[key]  < 0):
+                    points_contact.pop(key)
+
+            self._send_frame(frame)
+            points_location.clear()
+            if (self.isCancelled):
+                    return
+            time.sleep(wait_ms)
     
     def wheel(self, pos):
         if pos < 85:
@@ -98,4 +158,10 @@ class OneDimAnim(__Anim):
             pos -= 170
             return (0, pos * 3, 255 - pos * 3)
     
-    
+    def __get_mouvement_factor(self, x):
+        period = 100 # The higher the slower
+        cycles = x / period
+        tau = math.pi * 2
+        raw_sin_wave = math.sin(cycles*tau)
+        mouvement_factor = raw_sin_wave / 2 + 0.5
+        return mouvement_factor

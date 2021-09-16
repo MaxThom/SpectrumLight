@@ -1,3 +1,5 @@
+from dataclasses import dataclass
+
 def get_void_array_1d(length, init_value=None):
     return [init_value] * length
 
@@ -13,4 +15,10 @@ def add_void_layer_1d(array, init_value=None):
     new_layer = [init_value] * len(array[0])    
     array.insert(0, new_layer)
     return array
-    
+
+@dataclass
+class Point:
+    x: int
+    x_v: int
+    y: int = 0    
+    y_v: int = 0
