@@ -16,6 +16,12 @@ def add_void_layer_1d(array, init_value=None):
     array.insert(0, new_layer)
     return array
 
+def multiply_tuple_by_scalar(tup, scalar):
+    return tuple(scalar * x for x in tup)
+
+def divide_tuple_by_scalar(tup, scalar):
+    return tuple(scalar // x for x in tup)
+
 @dataclass
 class Point:
     x: int

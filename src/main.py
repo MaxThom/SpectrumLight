@@ -38,7 +38,7 @@ class Main:
         self.q_command.put(command)
         command = {
             "command": "animation",
-            "name": "clear",
+            "name": "off",
             "segment": 0,
             "configuration": { }
         }

@@ -6,6 +6,15 @@ def add_void_layer(arr, init_value=None):
     arr.insert(0, new_layer)
     return arr
 
+
+
+tup = (10, 10, 10, 10)
+tup2 = tuple(10*x for x in tup)
+
+print(tup)
+print(tup2)
+
+
 var = [9,9,9,9,9,9]
 print(var)
 var = add_void_layer(var,1)
