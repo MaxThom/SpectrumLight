@@ -6,12 +6,7 @@ class Display():
         self.set_factory_strip_config()
 
     def __initialize_strip(self):
-        LED_DIMENSION = 1 #1, 2, 3
-        LED_WIDTH = 0
-        LED_HEIGHT = 0
-        LED_LAYOUT = 1
-
-        if self.strip_config["LED_DIMENSION"] == 2:
+        if self.strip_config["LED_LAYOUT"] == 1:
             self.strip_config["LED_COUNT"] = self.strip_config["LED_WIDTH"] * self.strip_config["LED_HEIGHT"]
         self.strip = PixelStrip(self.strip_config["LED_COUNT"],
                                 self.strip_config["LED_PIN"],
@@ -33,7 +28,6 @@ class Display():
             "LED_BRIGHTNESS": constants.LED_BRIGHTNESS,
             "LED_CHANNEL": constants.LED_CHANNEL,
             "LED_STRIP": constants.LED_STRIP,
-            "LED_DIMENSION": constants.LED_DIMENSION,
             "LED_WIDTH": constants.LED_WIDTH,
             "LED_HEIGHT": constants.LED_HEIGHT,
             "LED_LAYOUT": constants.LED_LAYOUT
@@ -57,8 +51,6 @@ class Display():
             self.strip_config["LED_CHANNEL"] = args["LED_CHANNEL"]
         if "LED_STRIP" in args and args["LED_STRIP"]:
             self.strip_config["LED_STRIP"] = args["LED_STRIP"]
-        if "LED_DIMENSION" in args and args["LED_DIMENSION"]:
-            self.strip_config["LED_DIMENSION"] = args["LED_DIMENSION"]
         if "LED_WIDTH" in args and args["LED_WIDTH"]:
             self.strip_config["LED_WIDTH"] = args["LED_WIDTH"]
         if "LED_HEIGHT" in args and args["LED_HEIGHT"]:
@@ -77,8 +69,8 @@ class Display():
     def get_num_pixels_2d(self):
         return (self.strip_config["LED_WIDTH"],  self.strip_config["LED_HEIGHT"])
 
-    def get_strip_dimension(self):
-        return self.strip_config["LED_DIMENSION"]
+    def get_strip_layout(self):
+        return self.strip_config["LED_LAYOUT"]
 
     def get_brightness(self):
         return self.strip.getBrightness()
@@ -117,10 +109,32 @@ class Display():
         self.strip.show()
     
     def __display_frame_2d_up_north_snake(self, index, frame):
-        for i, led in enumerate(frame):
-            if led != None:
-                if len(led) == 4:
-                    self.strip.setPixelColor(i+index, Color(led[0], led[1], led[2], led[3]))
-                else:    
-                    self.strip.setPixelColor(i+index, Color(led[0], led[1], led[2], 0))
+        #self.__display_frame_1d(0, [(0,0,0)] * len(frame))
+        #frame = [(0,0,100)] * len(frame)
+
+        k = 0
+        for i in range(0, len(frame)-16, 16):
+            for j in range(0, 16, 1):                
+                tile = 16 * 16 * k
+                row = 16 * (15 - (i%768)//48)
+                index = 0
+
+                if i//768 % 2 == 1:
+                    if ((15 - i//48) % 2) == 0:
+                        index = tile + row + (15 - j)
+                    else:
+                        index = tile + row + j
+                else:
+                    if ((15 - i//48) % 2) == 1:
+                        index = tile + row + (15 - j)
+                    else:
+                        index = tile + row + j
+                
+                #print(i, j, tile, row)
+                #print(index)
+                self.strip.setPixelColor((i//768*768)+index, Color(frame[i+j][0], frame[i+j][1], frame[i+j][2]))
+                #self.strip.show()
+            k = k + 1
+            if k == 3:
+                k = 0
         self.strip.show()

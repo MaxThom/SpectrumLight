@@ -32,7 +32,7 @@ class Main:
         command = {
             "command": "segment",
             "segments": [
-                (0, constants.LED_COUNT)
+                (0, self.display.get_num_pixels())
             ],            
         }
         self.q_command.put(command)
@@ -46,7 +46,7 @@ class Main:
         self.q_command.put(command)
         command = {
             "command": "animation",
-            "name": "rainbow_cycle",
+            "name": "rainbow_cycle", #rainbow_cycle
             "segment": 0,
             "dimension": 1,
             "configuration": {

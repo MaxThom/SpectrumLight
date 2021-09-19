@@ -92,7 +92,7 @@ class OneDimAnim(__Anim):
                 self.__send_frame(frame)
                 if (self.isCancelled):
                     return
-                time.sleep(wait_ms / 1000.0)
+                time.sleep(wait_ms)
 
     #
     # Args: color, wait_ms, reverse, fade_step
@@ -139,7 +139,7 @@ class OneDimAnim(__Anim):
                 self.__send_frame(frame)
                 if (self.isCancelled):
                     return
-                time.sleep(wait_ms/1000)
+                time.sleep(wait_ms)
                 if (self.isCancelled):
                     return
     
