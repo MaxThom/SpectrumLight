@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from display.display import Display
+from services.display import Display
 
 class __Anim(ABC):
     def __init__(self, p_display, p_segment):

@@ -1,6 +1,6 @@
 
 from flask import Blueprint, request, jsonify, render_template
-from display.display import Display
+from services.display import Display
 import queue
 import api.constants as constants
 import api.utils as utils

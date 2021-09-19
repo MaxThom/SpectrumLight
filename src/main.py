@@ -5,7 +5,7 @@ from flask import Flask, request, jsonify
 
 from hotspot.hotspot import hotspot_bp
 from api.animation_controller import animation_bp, set_dependencies
-from display.display import Display
+from services.display import Display
 from services.process_manager import ProcessManagers
 from queue import PriorityQueue
 import constants as constants
