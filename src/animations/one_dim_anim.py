@@ -11,8 +11,22 @@ class OneDimAnim(__Anim):
         self.end_index = p_segment[1]
         self.length = self.end_index - self.start_index + 1
 
+    # Flatten and send frame
+    def __send_frame(self, next_frame):
+        frame = None
+        if type(next_frame[0]).__name__ == "list":
+            frame = [None] * len(next_frame[0])
+            for i, row in enumerate(zip(*next_frame)):
+                for column in row:
+                    if column != None:
+                        frame[i] = column
+                        break
+        else:
+            frame = next_frame
+        self.display.send_frame(self.start_index, frame)
+
     def __clear(self):
-        self._send_frame(utils.get_colorless_array_1d(self.length))
+        self.__send_frame(utils.get_colorless_array_1d(self.length))
 
     def off(self, args):
         self.__clear()
@@ -47,13 +61,21 @@ class OneDimAnim(__Anim):
         frame[0][55] = (0, 255, 0)
         frame[0][65] = (0, 255, 0)
         frame[0][75] = (0, 255, 0)
-        self._send_frame(frame)
+        self.__send_frame(frame)
+
+    #
+    # Args: color, wait_ms, reverse
+    #
+    def color_full(self, args):
+        color = utils.array_to_tuple(args["color"]) if "color" in args else (255,255,255)
+        frame = utils.get_void_array_1d(self.length, color)
+        self.__send_frame(frame)
 
     #
     # Args: color, wait_ms, reverse
     #
     def color_wipe(self, args):
-        color = utils.array_to_tuple(args["color"]) if "color" in args else (0,0,0,255)
+        color = utils.array_to_tuple(args["color"]) if "color" in args else (0,0,255)
         wait_ms = args["wait_ms"] if "wait_ms" in args else 0.05
         reverse = args["reverse"] if "reverse" in args else False
         start = 0 if not reverse else self.length-1
@@ -67,7 +89,7 @@ class OneDimAnim(__Anim):
                 frame = utils.get_void_array_1d(self.length)
                 frame[i] = color
             
-                self._send_frame(frame)
+                self.__send_frame(frame)
                 if (self.isCancelled):
                     return
                 time.sleep(wait_ms / 1000.0)
@@ -76,7 +98,7 @@ class OneDimAnim(__Anim):
     # Args: color, wait_ms, reverse, fade_step
     #
     def color_wipe_fade(self, args):
-        color = utils.array_to_tuple(args["color"]) if "color" in args else (0,0,0,255)
+        color = utils.array_to_tuple(args["color"]) if "color" in args else (0,0,255)
         if len(color) == 3:
             color = (color[0], color[1], color[2], 0)
         wait_ms = args["wait_ms"] if "wait_ms" in args else 0.05
@@ -114,7 +136,7 @@ class OneDimAnim(__Anim):
                             frame[j] = (r, g, b, w)
                         else:
                             frame[j] = color
-                self._send_frame(frame)
+                self.__send_frame(frame)
                 if (self.isCancelled):
                     return
                 time.sleep(wait_ms/1000)
@@ -146,7 +168,7 @@ class OneDimAnim(__Anim):
                             frame[j] = (r, g, b)
                         else:
                             frame[j] = (cycle_color[0], cycle_color[1], cycle_color[2])
-                    self._send_frame(frame)
+                    self.__send_frame(frame)
                     if (self.isCancelled):
                         return
                     time.sleep(wait_ms)
@@ -184,7 +206,7 @@ class OneDimAnim(__Anim):
 
             if (self.isCancelled):
                 return        
-        self._send_frame(frame)
+        self.__send_frame(frame)
 
         if (with_animation):
             #frame = utils.add_void_layer_1d(frame)
@@ -245,7 +267,7 @@ class OneDimAnim(__Anim):
                             frame[j] = (r, g, b)
                         k += 1
 
-                    self._send_frame(frame)
+                    self.__send_frame(frame)
                     if (self.isCancelled):
                         return
                     time.sleep(wait_ms)
@@ -265,7 +287,7 @@ class OneDimAnim(__Anim):
                     frame[i] = self.__wheel(((i * 256 // self.length) + j) % 256)
                 if (self.isCancelled):
                     return
-                self._send_frame(frame)
+                self.__send_frame(frame)
                 if wait_ms > 0:
                     time.sleep(wait_ms)
                 if (self.isCancelled):
@@ -279,7 +301,7 @@ class OneDimAnim(__Anim):
         wait_ms = args["wait_ms"] if "wait_ms" in args else 0.05
         count = args["count"] if "count" in args else 10
         turn_chance = args["turn_chance"] if "turn_chance" in args else 2
-        color = utils.array_to_tuple(args["color"]) if "color" in args else (0,0,0,255)
+        color = utils.array_to_tuple(args["color"]) if "color" in args else (0,0,255,0)
         contact_color = utils.array_to_tuple(args["contact_color"]) if "contact_color" in args else (127, 127, 127, 0)
 
         self.__clear()
@@ -327,7 +349,7 @@ class OneDimAnim(__Anim):
                 if (points_contact[key]  < 0):
                     points_contact.pop(key)
 
-            self._send_frame(frame)
+            self.__send_frame(frame)
             points_location.clear()
             if (self.isCancelled):
                     return
@@ -339,7 +361,7 @@ class OneDimAnim(__Anim):
     def blink_color(self, args):
         wait_ms = args["wait_ms"] if "wait_ms" in args else 1
         blink_time = args["blink_time"] if "blink_time" in args else 3
-        color = utils.array_to_tuple(args["color"]) if "color" in args else (0,0,0,255)
+        color = utils.array_to_tuple(args["color"]) if "color" in args else (0,0,255,0)
 
         self.__clear()
         while True:
@@ -350,7 +372,7 @@ class OneDimAnim(__Anim):
                    frame[k] =(color[0], color[1], color[2],  color[3])
                 if self.isCancelled:
                     return
-                self._send_frame(frame)
+                self.__send_frame(frame)
                 time.sleep(0.08)
                 self.__clear()
                 if self.isCancelled:
@@ -368,7 +390,7 @@ class OneDimAnim(__Anim):
     def appear_from_back(self, args):
         wait_ms = args["wait_ms"] if "wait_ms" in args else 0.02
         size = args["size"] if "size" in args else 3
-        color = utils.array_to_tuple(args["color"]) if "color" in args else (0,0,255,255)
+        color = utils.array_to_tuple(args["color"]) if "color" in args else (0,0,255,0)
 
         self.__clear()
         while not self.isCancelled:
@@ -385,7 +407,7 @@ class OneDimAnim(__Anim):
                         frame[j+l] = (color[0], color[1], color[2],  color[3])
                     if self.isCancelled:
                         return
-                    self._send_frame(frame)
+                    self.__send_frame(frame)
                     time.sleep(wait_ms)
                     if self.isCancelled:
                         return

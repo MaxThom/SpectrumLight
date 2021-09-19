@@ -10,6 +10,10 @@ LED_INVERT = False     # True to invert the signal (when using NPN transistor le
 LED_CHANNEL = 0
 ##LED_STRIP = ws.SK6812_STRIP_RGBW
 LED_STRIP = ws.SK6812W_STRIP
+LED_DIMENSION = 1 #1, 2, 3
+LED_WIDTH = 48
+LED_HEIGHT = 48
+LED_LAYOUT = 0 # 0 = 1d, 1 = 2d south_north_snake
 
 # Thread priority
 TH_PRIORITY_HIGH = 0.0100

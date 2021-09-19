@@ -5,7 +5,7 @@ from flask import Flask, request, jsonify
 
 from hotspot.hotspot import hotspot_bp
 from api.animation_controller import animation_bp, set_dependencies
-from display.one_dim_display import OneDimDisplay
+from display.display import Display
 from services.process_manager import ProcessManagers
 from queue import PriorityQueue
 import constants as constants
@@ -18,7 +18,7 @@ class Main:
         self.app.register_blueprint(animation_bp, url_prefix='/api/led')
 
         self.q_command = queue.Queue()        
-        self.display = OneDimDisplay()
+        self.display = Display()
         self.process_th = ProcessManagers(self.q_command, self.display)
         set_dependencies(self.q_command, self.display)
     
@@ -40,6 +40,7 @@ class Main:
             "command": "animation",
             "name": "off",
             "segment": 0,
+            "dimension": 1,
             "configuration": { }
         }
         self.q_command.put(command)
@@ -47,6 +48,7 @@ class Main:
             "command": "animation",
             "name": "rainbow_cycle",
             "segment": 0,
+            "dimension": 1,
             "configuration": {
                 "wait_ms": 0.005,
             }

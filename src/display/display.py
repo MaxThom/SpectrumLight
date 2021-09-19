@@ -1,16 +1,18 @@
-from abc import ABC, abstractmethod
 import constants as constants
 from rpi_ws281x import Color, PixelStrip, ws
 
-class __Display(ABC):
+class Display():
     def __init__(self):
         self.set_factory_strip_config()
 
-    @abstractmethod
-    def send_frame(self, index, next_frame):
-        pass
-
     def __initialize_strip(self):
+        LED_DIMENSION = 1 #1, 2, 3
+        LED_WIDTH = 0
+        LED_HEIGHT = 0
+        LED_LAYOUT = 1
+
+        if self.strip_config["LED_DIMENSION"] == 2:
+            self.strip_config["LED_COUNT"] = self.strip_config["LED_WIDTH"] * self.strip_config["LED_HEIGHT"]
         self.strip = PixelStrip(self.strip_config["LED_COUNT"],
                                 self.strip_config["LED_PIN"],
                                 self.strip_config["LED_FREQ_HZ"],
@@ -18,7 +20,7 @@ class __Display(ABC):
                                 self.strip_config["LED_INVERT"],
                                 self.strip_config["LED_BRIGHTNESS"],
                                 self.strip_config["LED_CHANNEL"],
-                                self.strip_config["LED_STRIP"],)
+                                self.strip_config["LED_STRIP"])
         self.strip.begin()
 
     def set_factory_strip_config(self):
@@ -31,6 +33,10 @@ class __Display(ABC):
             "LED_BRIGHTNESS": constants.LED_BRIGHTNESS,
             "LED_CHANNEL": constants.LED_CHANNEL,
             "LED_STRIP": constants.LED_STRIP,
+            "LED_DIMENSION": constants.LED_DIMENSION,
+            "LED_WIDTH": constants.LED_WIDTH,
+            "LED_HEIGHT": constants.LED_HEIGHT,
+            "LED_LAYOUT": constants.LED_LAYOUT
         }
         self.__initialize_strip()
 
@@ -51,6 +57,14 @@ class __Display(ABC):
             self.strip_config["LED_CHANNEL"] = args["LED_CHANNEL"]
         if "LED_STRIP" in args and args["LED_STRIP"]:
             self.strip_config["LED_STRIP"] = args["LED_STRIP"]
+        if "LED_DIMENSION" in args and args["LED_DIMENSION"]:
+            self.strip_config["LED_DIMENSION"] = args["LED_DIMENSION"]
+        if "LED_WIDTH" in args and args["LED_WIDTH"]:
+            self.strip_config["LED_WIDTH"] = args["LED_WIDTH"]
+        if "LED_HEIGHT" in args and args["LED_HEIGHT"]:
+            self.strip_config["LED_HEIGHT"] = args["LED_HEIGHT"]
+        if "LED_LAYOUT" in args and args["LED_LAYOUT"]:
+            self.strip_config["LED_LAYOUT"] = args["LED_LAYOUT"]
 
         self.__initialize_strip()
 
@@ -59,6 +73,12 @@ class __Display(ABC):
 
     def get_num_pixels(self):
         return self.strip.numPixels()
+
+    def get_num_pixels_2d(self):
+        return (self.strip_config["LED_WIDTH"],  self.strip_config["LED_HEIGHT"])
+
+    def get_strip_dimension(self):
+        return self.strip_config["LED_DIMENSION"]
 
     def get_brightness(self):
         return self.strip.getBrightness()
@@ -77,3 +97,30 @@ class __Display(ABC):
         if self.strip_config["LED_STRIP"] == ws.SK6812W_STRIP:
             return self.strip.getPixelColorRGBW(index)
         return self.strip.getPixelColorRGB(index)
+
+    def send_frame(self, index, next_frame):        
+        try:
+            if self.strip_config["LED_LAYOUT"] == 0:
+                self.__display_frame_1d(index, next_frame)
+            elif self.strip_config["LED_LAYOUT"] == 1:
+                self.__display_frame_2d_up_north_snake(index, next_frame)
+        except Exception as e: 
+            print("Unkown error: " + e)
+    
+    def __display_frame_1d(self, index, frame):
+        for i, led in enumerate(frame):
+            if led != None:
+                if len(led) == 4:
+                    self.strip.setPixelColor(i+index, Color(led[0], led[1], led[2], led[3]))
+                else:    
+                    self.strip.setPixelColor(i+index, Color(led[0], led[1], led[2], 0))
+        self.strip.show()
+    
+    def __display_frame_2d_up_north_snake(self, index, frame):
+        for i, led in enumerate(frame):
+            if led != None:
+                if len(led) == 4:
+                    self.strip.setPixelColor(i+index, Color(led[0], led[1], led[2], led[3]))
+                else:    
+                    self.strip.setPixelColor(i+index, Color(led[0], led[1], led[2], 0))
+        self.strip.show()

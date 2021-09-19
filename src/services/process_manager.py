@@ -18,19 +18,19 @@ class ProcessManagers(Thread):
     
     def __del__(self):
         self.join_all_threads()
-        print("TERMINATED")
+        print("PROCESS_MANAGER_OUT")
 
     # Receive command
     def run(self):
         print('Started one dimension process thread')
         while True:
-            next_cmd = None
-            while not self.q_command.empty():
-                try:
+            try:
+                next_cmd = None
+                while not self.q_command.empty():                
                     next_cmd = self.q_command.get()            
                     self.process_command(next_cmd)
-                except Exception as e: 
-                    print("Unkown error: " + e)
+            except Exception as e: 
+                print("Unkown error: " + e)
 
     def process_command(self, cmd):
         print("> Command " + cmd["command"])
@@ -39,11 +39,17 @@ class ProcessManagers(Thread):
         elif cmd["command"] == ANIMATION:
             anim = cmd["name"]
             segment = cmd["segment"]
+            dimension = cmd["dimension"]
             config = cmd["configuration"]
             if segment >= len(self.onGoingAnim):
                 return
+            next_anim = self.create_animation_for_display(dimension, self.display, self.segments[segment])
+            if not hasattr(next_anim, anim):
+                print("Animation " + anim + "doest not exist!")
+                return
             self.join_thread(segment)
-            print("TERNATED")            
+            print("TERNATED")
+            self.onGoingAnim[segment] = next_anim
             self.onGoingThread[segment] = Thread(target=getattr(self.onGoingAnim[segment], anim), args=(config,))
             self.onGoingThread[segment].start()            
  
@@ -57,9 +63,9 @@ class ProcessManagers(Thread):
         self.segments = []
         # Create segments
         for i, segment in enumerate(cmd["segments"]):
-            self.segments.append((segment[0], segment[1]))            
+            self.segments.append(tuple(segment))            
             self.onGoingThread.append(None)
-            self.onGoingAnim.append(self.create_animation_for_display(self.display, (segment[0], segment[1])))
+            self.onGoingAnim.append(None)
 
     def join_all_threads(self):
         for th in self.onGoingAnim:
@@ -76,7 +82,7 @@ class ProcessManagers(Thread):
             self.onGoingThread[index].join()
             self.onGoingAnim[index].isCancelled = False
     
-    def create_animation_for_display(self, display, segment):
-        if type(display).__name__ == "OneDimDisplay":
+    def create_animation_for_display(self, dimension, display, segment):
+        if dimension == 1:
             return OneDimAnim(display, segment)
         return None
