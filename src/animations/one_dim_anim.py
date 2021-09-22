@@ -412,6 +412,143 @@ class OneDimAnim(__Anim):
                     if self.isCancelled:
                         return
 
+    #
+    # Args: wait_ms,  color
+    #
+    def theater_chase(self, args):
+        wait_ms = args["wait_ms"] if "wait_ms" in args else 0.01
+        color = utils.array_to_tuple(args["color"]) if "color" in args else (0,0,255,0)
+
+        while (True):
+            for q in range(3):
+                frame = utils.get_colorless_array_1d(self.length)
+                if (self.isCancelled):
+                    return
+                for i in range(0, self.length-3, 3):
+                    frame[i + q] = color                    
+                self.__send_frame(frame)
+                if (self.isCancelled):
+                    return
+                time.sleep(wait_ms)
+                if (self.isCancelled):
+                    return
+
+    #
+    # Args: wait_ms
+    #
+    def theater_chase_rainbow(self, args):
+        wait_ms = args["wait_ms"] if "wait_ms" in args else 0.01
+        
+        while (True):
+            for j in range(256):
+                for q in range(3):
+                    frame = utils.get_colorless_array_1d(self.length)
+                    if (self.isCancelled):
+                        return
+                    for i in range(0, self.length-3, 3):
+                        frame[i + q] = self.__wheel((i + j) % 255)
+                    self.__send_frame(frame)
+                    if (self.isCancelled):
+                        return
+                    time.sleep(wait_ms)
+                    if (self.isCancelled):
+                        return
+
+    def breathing(self, args):
+        move_factor = args["move_factor"] if "move_factor" in args else 0.05
+        color = utils.array_to_tuple(args["color"]) if "color" in args else (0,0,255,0)
+        mov_max = 100
+        mov_factor = move_factor
+        while (True):
+            mov = 0
+            while (mov < mov_max):
+                if (self.isCancelled):
+                    return
+                time.sleep(0.01)
+                if (self.isCancelled):
+                    return
+                factor = self.__get_mouvement_factor(mov)
+                frame = utils.get_void_array_1d(self.length)
+                new_color =  utils.floor_tuple(utils.multiply_tuple_by_scalar(color, factor))
+                for i in range(self.length):
+                    frame[i] = new_color
+                self.__send_frame(frame)
+                mov += mov_factor
+                if (self.isCancelled):
+                    return
+
+    def breathing_lerp(self, args):    
+        move_factor = args["move_factor"] if "move_factor" in args else 0.25
+        color_from = utils.array_to_tuple(args["color_from"]) if "color_from" in args else (0,0,255,0)
+        color_to = utils.array_to_tuple(args["color_to"]) if "color_to" in args else (0,255,0,0)
+        mov_max = 100
+        mov_factor = move_factor
+        while (True):
+            mov = 0
+            while (mov < mov_max):
+                if (self.isCancelled):
+                    return
+                time.sleep(0.01)
+                if (self.isCancelled):
+                    return
+                frame = utils.get_void_array_1d(self.length)
+                factor = self.__get_mouvement_factor(mov)
+                r = int((color_to[0]-color_from[0])*factor) + color_from[0]
+                g = int((color_to[1]-color_from[1])*factor) + color_from[1]
+                b = int((color_to[2]-color_from[2])*factor) + color_from[2]
+                w = 0
+                if len(color_to) == 4:
+                    w = int((color_to[3]-color_from[3])*factor) + color_from[3]
+                
+                for i in range(self.length):
+                    frame[i] = (r, g, b, w)
+                self.__send_frame(frame)
+                mov += mov_factor
+                if (self.isCancelled):
+                    return
+
+    def fireworks(self, args):
+        size = args["size"] if "size" in args else 7
+        is_rainbow = args["is_rainbow"] if "is_rainbow" in args else True
+        number_of_fireworks = args["number_of_fireworks"] if "number_of_fireworks" in args else 5
+        chance_of_explosion = args["chance_of_explosion"] if "chance_of_explosion" in args else 5
+        fade_step = args["fade_step"] if "fade_step" in args else 20
+        firework_fade = args["firework_fade"] if "firework_fade" in args else 40
+        color = utils.array_to_tuple(args["color"]) if "color" in args else (0,0,255,0)
+
+        if (size % 2 == 0):
+            size += 1
+        while (not self.isCancelled):
+            frame = utils.get_void_array_1d(self.length)
+            for i in range(self.length):
+                c = self.display.get_pixels_color_rgbw(i)
+                r = int(max(0, c.r - (c.r / 255 * fade_step)))
+                g = int(max(0, c.g - (c.g / 255 * fade_step)))
+                b = int(max(0, c.b - (c.b / 255 * fade_step)))
+                frame[i] = (r, g, b)
+            for i in range(number_of_fireworks):
+                if (self.isCancelled):
+                    return
+                chance = randint(0, 100)            
+                if (chance <= chance_of_explosion):
+                    if (is_rainbow):
+                        color = self.__wheel(randint(1, 255))
+                    where = randint(0, self.length)
+                    frame[where] = (color[0], color[1], color[2])
+                    for j in range(int(size/2)+1):
+                        step = firework_fade * j
+                        r = int(max(0, color[0] - (color[0] / 255 * step)))
+                        g = int(max(0, color[1] - (color[1] / 255 * step)))
+                        b = int(max(0, color[2] - (color[2] / 255 * step)))
+                        frame[where-j] = (r, g, b)
+                        frame[where+j] = (r, g, b)
+            self.__send_frame(frame)
+            if self.isCancelled:
+                    return
+            time.sleep(0.005)
+            if (self.isCancelled):
+                    return
+
     def __wheel(self, pos):
         if pos < 85:
             return (pos * 3, 255 - pos * 3, 0)

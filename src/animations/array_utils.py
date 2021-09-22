@@ -19,6 +19,9 @@ def add_void_layer_1d(array, init_value=None):
 def multiply_tuple_by_scalar(tup, scalar):
     return tuple(scalar * x for x in tup)
 
+def floor_tuple(tup):
+    return tuple(int(x) for x in tup)
+
 def divide_tuple_by_scalar(tup, scalar):
     return tuple(scalar // x for x in tup)
 

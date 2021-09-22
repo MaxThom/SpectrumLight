@@ -46,11 +46,12 @@ class Main:
         self.q_command.put(command)
         command = {
             "command": "animation",
-            "name": "color_wipe", #rainbow_cycle
+            "name": "labyrinth", #rainbow_cycle
             "segment": 0,
             "dimension": 1,
             "configuration": {
                 "wait_ms": 0.005,
+                "count": 15
             }
         }
         self.q_command.put(command)
