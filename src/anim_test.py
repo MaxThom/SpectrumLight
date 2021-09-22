@@ -43,9 +43,9 @@ def init_animation():
     strip2.begin()
     strip3.begin()
     
-    #color_wipe_ms_triple(strip, strip2, strip3)
+    color_wipe_ms_triple(strip, strip2, strip3)
     #color_wipe_ms(strip, strip2, strip3)
-    color_blink_ms(strip, strip2, strip3)
+    #color_blink_ms(strip, strip2, strip3)
 
     #th_strip1 = Thread(target=color_wipe_infinite, args=(strip, Color(0, 255, 0)))
     #th_strip2 = Thread(target=color_wipe_infinite, args=(strip2, Color(0, 0, 255)))
@@ -114,6 +114,20 @@ def color_wipe_ms_triple(strip1, strip2, strip3):
             strip1.show()
             strip2.show()
             strip3.show()
+        #for i in range(1, strip1.numPixels(), 3):
+        #    strip1.setPixelColor(i, Color(0, 255, 0))
+        #    strip2.setPixelColor(i+1, Color(0, 0, 255))
+        #    strip3.setPixelColor(i+2, Color(255, 0, 0))
+        #    strip1.show()
+        #    strip2.show()
+        #    strip3.show()
+        #for i in range(2, strip1.numPixels(), 3):
+        #    strip1.setPixelColor(i, Color(0, 0, 255))
+        #    strip2.setPixelColor(i+1, Color(255, 0, 0))
+        #    strip3.setPixelColor(i+2, Color(0, 255, 0))
+        #    strip1.show()
+        #    strip2.show()
+        #    strip3.show()
 
 def color_wipe_ms(strip1, strip2, strip3):    
     while True:

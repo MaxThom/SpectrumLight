@@ -109,31 +109,28 @@ class Display():
         self.strip.show()
     
     def __display_frame_2d_up_north_snake(self, index, frame):
-        #self.__display_frame_1d(0, [(0,0,0)] * len(frame))
-        #frame = [(0,0,100)] * len(frame)
+        PANEL_HEIGHT = 16
+        PANEL_WIDTH = 16
+        PANEL_LEDS = PANEL_WIDTH * PANEL_HEIGHT
+        NB_PANEL_PER_ROW = 3
+        NB_LEDS_PER_ROW = NB_PANEL_PER_ROW * PANEL_LEDS
+        NB_ROWS_PER_ROW = PANEL_HEIGHT * NB_PANEL_PER_ROW
 
         k = 0
-        for i in range(0, len(frame)-16, 16):
-            for j in range(0, 16, 1):                
-                tile = 16 * 16 * k
-                row = 16 * (15 - (i%768)//48)
+        for i in range(0, len(frame)-PANEL_WIDTH, PANEL_WIDTH):
+            for j in range(0, PANEL_WIDTH, 1):                
+                tile = PANEL_LEDS * k
+                row = PANEL_WIDTH * (PANEL_WIDTH-1 - (i%NB_LEDS_PER_ROW)//NB_ROWS_PER_ROW)
                 index = 0
 
-                if i//768 % 2 == 1:
-                    if ((15 - i//48) % 2) == 0:
-                        index = tile + row + (15 - j)
-                    else:
-                        index = tile + row + j
+                if ((PANEL_WIDTH-1 - i//NB_ROWS_PER_ROW) % 2) == 1:
+                    index = tile + row + (PANEL_WIDTH-1 - j)
                 else:
-                    if ((15 - i//48) % 2) == 1:
-                        index = tile + row + (15 - j)
-                    else:
-                        index = tile + row + j
-                
-                #print(i, j, tile, row)
-                #print(index)
-                self.strip.setPixelColor((i//768*768)+index, Color(frame[i+j][0], frame[i+j][1], frame[i+j][2]))
-                #self.strip.show()
+                    index = tile + row + j
+
+                if frame[i+j] != None:
+                    self.strip.setPixelColor((i//NB_LEDS_PER_ROW*NB_LEDS_PER_ROW)+index, Color(frame[i+j][0], frame[i+j][1], frame[i+j][2]))
+
             k = k + 1
             if k == 3:
                 k = 0

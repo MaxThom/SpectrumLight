@@ -46,7 +46,7 @@ class Main:
         self.q_command.put(command)
         command = {
             "command": "animation",
-            "name": "rainbow_cycle", #rainbow_cycle
+            "name": "color_wipe", #rainbow_cycle
             "segment": 0,
             "dimension": 1,
             "configuration": {
