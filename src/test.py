@@ -1,3 +1,5 @@
+import numpy as np
+import animations.array_utils as utils
 
 def add_void_layer(arr, init_value=None):
     if type(arr[0]).__name__ != "list":
@@ -6,6 +8,74 @@ def add_void_layer(arr, init_value=None):
     arr.insert(0, new_layer)
     return arr
 
+def add_void_layer_2d(arr, init_value=None):
+    if type(arr[0][0]).__name__ != "list":
+        arr = [arr]
+    new_layer = [[init_value] * len(arr[0][0])] * len(arr[0])    
+    arr.insert(0, new_layer)
+    return arr
+
+init_value = None
+x = np.full((3, 5), None)
+print(x)
+x.fill(init_value)
+print(x)
+
+x[0,1] = 2
+print(x)
+arr = utils.get_colorless_array_2d(3,3)
+print(arr)
+arr = add_void_layer_2d(arr)
+print(arr)
+
+T = [[[None, 1, 1, 1], 
+     [1, None, 1, None], 
+     [None, 1, None, 1], 
+     [1, None, 1, 1]], 
+     [[9, None, 9, 9], 
+     [9, None, 9, None], 
+     [9, 9, 9, 9], 
+     [None,9,9,None]],
+     [[3, 3, 3, 3], 
+     [3, 3, 3, 3], 
+     [3, 3, 3, 3], 
+     [3,3,3,3]]]
+
+N = [[(1,2,3), 1, 1, 1], 
+     [1, None, 1, None], 
+     [None, 1, None, 1], 
+     [1, None, 1, 1]]
+
+print(type(T).__name__)
+print(type(T[0]).__name__)
+print(type(T[0][0]).__name__)
+print(type(T[0][0][0]).__name__)
+print(type(N).__name__)
+print(type(N[0]).__name__)
+print(type(N[0][0]).__name__)
+
+#array2D = np.array([[31, 12, 43], [21, 9, 16], [0, 9, 0]])
+#array2D = np.array(T)
+#print("Given array:\n",array2D)
+#res = array2D.flatten()
+#print("Flattened array:\n ", res)
+print(len(T[0]))
+print(T[0][0][0])
+
+frame = T[0]
+print(frame)
+
+for i, row in enumerate(T[0]):
+    for j, column in enumerate(row):
+        for k, dim in enumerate(T):
+            if T[k][i][j] != None:
+                frame[i][j] = T[k][i][j]
+                break
+print(frame)
+F = []
+for row in frame:
+    F = F + row
+print(F)
 
 
 tup = (10, 10, 10, 10)

@@ -117,7 +117,7 @@ class Display():
         NB_ROWS_PER_ROW = PANEL_HEIGHT * NB_PANEL_PER_ROW
 
         k = 0
-        for i in range(0, len(frame)-PANEL_WIDTH, PANEL_WIDTH):
+        for i in range(0, len(frame)-PANEL_WIDTH+1, PANEL_WIDTH):
             for j in range(0, PANEL_WIDTH, 1):                
                 tile = PANEL_LEDS * k
                 row = PANEL_WIDTH * (PANEL_WIDTH-1 - (i%NB_LEDS_PER_ROW)//NB_ROWS_PER_ROW)
@@ -130,8 +130,9 @@ class Display():
 
                 if frame[i+j] != None:
                     self.strip.setPixelColor((i//NB_LEDS_PER_ROW*NB_LEDS_PER_ROW)+index, Color(frame[i+j][0], frame[i+j][1], frame[i+j][2]))
-
+                
             k = k + 1
             if k == 3:
                 k = 0
+        
         self.strip.show()

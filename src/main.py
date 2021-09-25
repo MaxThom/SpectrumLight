@@ -46,7 +46,7 @@ class Main:
         self.q_command.put(command)
         command = {
             "command": "animation",
-            "name": "labyrinth", #rainbow_cycle
+            "name": "rainbow_cycle", #labyrinth
             "segment": 0,
             "dimension": 1,
             "configuration": {

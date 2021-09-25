@@ -4,7 +4,7 @@ from threading import Thread
 import random
 
 # LED strip configuration:
-LED_COUNT = 768        # Number of LED pixels.
+LED_COUNT = 2304        # Number of LED pixels.
 LED_PIN = 18           # GPIO pin connected to the pixels (must support PWM!).
 LED_FREQ_HZ = 800000   # LED signal frequency in hertz (usually 800khz)
 LED_DMA = 10           # DMA channel to use for generating signal (try 10)
@@ -37,13 +37,13 @@ LED_3_STRIP = ws.WS2812_STRIP
 def init_animation():
     print('> Starting LED animation...')
     strip = PixelStrip(LED_COUNT, LED_PIN, LED_FREQ_HZ, LED_DMA, LED_INVERT, LED_BRIGHTNESS, LED_CHANNEL, LED_STRIP)
-    strip2 = PixelStrip(LED_2_COUNT, LED_2_PIN, LED_2_FREQ_HZ, LED_2_DMA, LED_2_INVERT, LED_2_BRIGHTNESS, LED_2_CHANNEL, LED_2_STRIP)
-    strip3 = PixelStrip(LED_3_COUNT, LED_3_PIN, LED_3_FREQ_HZ, LED_3_DMA, LED_3_INVERT, LED_3_BRIGHTNESS, LED_3_CHANNEL, LED_3_STRIP)
+    #strip2 = PixelStrip(LED_2_COUNT, LED_2_PIN, LED_2_FREQ_HZ, LED_2_DMA, LED_2_INVERT, LED_2_BRIGHTNESS, LED_2_CHANNEL, LED_2_STRIP)
+    #strip3 = PixelStrip(LED_3_COUNT, LED_3_PIN, LED_3_FREQ_HZ, LED_3_DMA, LED_3_INVERT, LED_3_BRIGHTNESS, LED_3_CHANNEL, LED_3_STRIP)
     strip.begin()
-    strip2.begin()
-    strip3.begin()
+    #strip2.begin()
+    #strip3.begin()
     
-    color_wipe_ms_triple(strip, strip2, strip3)
+    #color_wipe_ms_triple(strip, strip2, strip3)
     #color_wipe_ms(strip, strip2, strip3)
     #color_blink_ms(strip, strip2, strip3)
 
@@ -54,12 +54,12 @@ def init_animation():
     #th_strip2.start()
     #th_strip3.start()
 
-    #while True:
-    #    color_wipe(strip, Color(255, 0, 0))  # Red wipe
-    #    color_wipe(strip2, Color(0, 255, 0))  # Gree wipe
-    #  #color_wipe(strip, Color(0, 0, 255))  # Blue wipe
-    #   
-    #   #color_wipe(strip, Color(0, 0, 0, 255))  # White wipe
+    while True:
+        color_wipe(strip, Color(255, 0, 0))  # Red wipe
+        color_wipe(strip, Color(0, 255, 0))  # Gree wipe
+        color_wipe(strip, Color(0, 0, 255))  # Blue wipe
+       
+       #color_wipe(strip, Color(0, 0, 0, 255))  # White wipe
  
 def color_full(strip):
     """Wipe color across display a pixel at a time."""
@@ -83,10 +83,10 @@ def color_wipe(strip, color, wait_ms=50):
     """Wipe color across display a pixel at a time."""
     for i in range(strip.numPixels()):
         strip.setPixelColor(i, color)
-        #start = time.time()
+        start = time.time()
         strip.show()
-        #end = time.time()
-        #print(f"{(end - start) * 1000} ms")
+        end = time.time()
+        print(f"{(end - start) * 1000} ms")
         #time.sleep(wait_ms / 1000.0)
 
 def color_wipe_infinite(strip, color, wait_ms=50):

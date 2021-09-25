@@ -3,6 +3,7 @@ from threading import Thread
 from queue import PriorityQueue
 import constants as constants
 from animations.one_dim_anim import OneDimAnim
+from animations.two_dim_anim import TwoDimAnim
 
 SEGMENT="segment"
 ANIMATION="animation"
@@ -85,4 +86,6 @@ class ProcessManagers(Thread):
     def create_animation_for_display(self, dimension, display, segment):
         if dimension == 1:
             return OneDimAnim(display, segment)
+        elif dimension == 2:
+            return TwoDimAnim(display, segment)
         return None
