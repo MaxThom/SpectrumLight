@@ -32,7 +32,7 @@ class Main:
         command = {
             "command": "segment",
             "segments": [
-                (0, self.display.get_num_pixels())
+                [0, self.display.get_num_pixels()]
             ],            
         }
         self.q_command.put(command)

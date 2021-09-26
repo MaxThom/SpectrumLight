@@ -7,9 +7,12 @@ from random import *
 class TwoDimAnim(__Anim):
     def __init__(self, p_display, p_segment):
         super().__init__(p_display, p_segment)
-        self.start_index = p_segment[0]
-        self.end_index = p_segment[1]
-        self.length = self.end_index - self.start_index + 1
+        self.start_index = (p_segment[0], p_segment[1])
+        self.end_index = (p_segment[2], p_segment[3])
+        self.width = self.end_index[0] - self.start_index[0]
+        self.height = self.end_index[1] - self.start_index[1]
+        print(self.start_index, self.end_index)
+        print(self.width, self.height)
 
     # Flatten and send frame
     def __send_frame(self, next_frame):
@@ -24,8 +27,13 @@ class TwoDimAnim(__Anim):
         else:            
             flatten_frame = next_frame
 
-        frame = flatten_frame.flatten()
-        self.display.send_frame(self.start_index, frame)
+        # Add sub
+        full_frame = utils.get_void_array_2d(self.display.get_num_pixels_2d()[0], self.display.get_num_pixels_2d()[1])
+        #full_frame[self.start_index[0]:self.end_index[0], self.start_index[1]:self.end_index[1]] = flatten_frame
+        full_frame[self.start_index[1]:self.end_index[1], self.start_index[0]:self.end_index[0]] = flatten_frame
+
+        frame = full_frame.flatten()
+        self.display.send_frame(0, frame)
 
     def __clear(self):
         self.__send_frame(utils.get_colorless_array_1d(self.length))
@@ -37,17 +45,11 @@ class TwoDimAnim(__Anim):
     # Args: color, wait_ms, reverse
     #
     def test(self, args):
-        frame = utils.get_colorless_array_2d(48, 48)
-        frame[0][5] = (255, 0, 0)
-        frame[47][5] = (255, 0, 0)
-        frame[47][10] = (255, 0, 0)
-        frame[47][15] = (255, 0, 0)
-        frame[47][20] = (255, 0, 0)
-        frame[47][25] = (255, 0, 0)
-        frame[47][30] = (255, 0, 0)
-        frame[47][35] = (255, 0, 0)
-        frame[47][40] = (255, 0, 0)
-        frame[47][45] = (255, 0, 0)
+        frame = utils.get_colorless_array_2d(self.width, self.height)
+        frame[0][2] = (255, 0, 0)
+        frame[2][2] = (255, 0, 0)
+        frame[2][2] = (255, 0, 0)
+        
         self.__send_frame(frame)
 
     #

@@ -15,6 +15,20 @@ def add_void_layer_2d(arr, init_value=None):
     arr.insert(0, new_layer)
     return arr
 
+
+
+
+A = np.full((5, 5), None)
+B = np.full((3, 2), 1)
+print(A)
+print(B)
+A[1:4, 3:5] = B
+print(A)
+
+
+
+
+
 init_value = None
 x = np.full((3, 5), None)
 print(x)

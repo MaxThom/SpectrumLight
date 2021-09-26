@@ -7,7 +7,7 @@ def get_void_array_1d(length, init_value=None):
 def get_colorless_array_1d(length):
     return [(0, 0, 0)] * length
 
-def get_void_array_2d(height, width, init_value=None):
+def get_void_array_2d(width, height, init_value=None):
     x = None
     if type(init_value).__name__ == 'tuple':
         x = np.empty((height, width), dtype=tuple)
@@ -16,8 +16,8 @@ def get_void_array_2d(height, width, init_value=None):
         x = np.full((height, width), init_value)    
     return x
 
-def get_colorless_array_2d(height, width):
-    return get_void_array_2d(height, width, (0,0,0))
+def get_colorless_array_2d(width, height):
+    return get_void_array_2d(width, height, (0,0,0))
 
 def array_to_tuple(array):
     return tuple(array)
