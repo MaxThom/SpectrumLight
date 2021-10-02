@@ -1,5 +1,5 @@
 import time 
-from threading import Thread
+from threading import Thread, Lock
 from queue import PriorityQueue
 import constants as constants
 from animations.one_dim_anim import OneDimAnim
@@ -44,7 +44,7 @@ class ProcessManagers(Thread):
             config = cmd["configuration"]
             if segment >= len(self.onGoingAnim):
                 return
-            next_anim = self.create_animation_for_display(dimension, self.display, self.segments[segment])
+            next_anim = self.create_animation_for_display(dimension, self.display, self.segments[segment], self.display.anim_mutexes[segment])
             if not hasattr(next_anim, anim):
                 print("Animation " + anim + "doest not exist!")
                 return
@@ -62,11 +62,13 @@ class ProcessManagers(Thread):
         self.onGoingAnim = []
         self.onGoingThread = []
         self.segments = []
+        self.display.anim_mutexes = []
         # Create segments
         for i, segment in enumerate(cmd["segments"]):
             self.segments.append(tuple(segment))            
             self.onGoingThread.append(None)
             self.onGoingAnim.append(None)
+            self.display.anim_mutexes.append(Lock())
 
     def join_all_threads(self):
         for th in self.onGoingAnim:
@@ -83,9 +85,9 @@ class ProcessManagers(Thread):
             self.onGoingThread[index].join()
             self.onGoingAnim[index].isCancelled = False
     
-    def create_animation_for_display(self, dimension, display, segment):
+    def create_animation_for_display(self, dimension, display, segment, mutex):
         if dimension == 1:
-            return OneDimAnim(display, segment)
+            return OneDimAnim(display, segment, mutex)
         elif dimension == 2:
-            return TwoDimAnim(display, segment)
+            return TwoDimAnim(display, segment, mutex)
         return None

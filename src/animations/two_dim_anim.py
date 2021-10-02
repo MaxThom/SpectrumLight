@@ -5,8 +5,8 @@ from animations.anim import __Anim
 from random import *
 
 class TwoDimAnim(__Anim):
-    def __init__(self, p_display, p_segment):
-        super().__init__(p_display, p_segment)
+    def __init__(self, p_display, p_segment, p_mutex):
+        super().__init__(p_display, p_segment, p_mutex)
         self.start_index = (p_segment[0], p_segment[1])
         self.end_index = (p_segment[2], p_segment[3])
         self.width = self.end_index[0] - self.start_index[0]
@@ -29,14 +29,17 @@ class TwoDimAnim(__Anim):
 
         # Add sub
         full_frame = utils.get_void_array_2d(self.display.get_num_pixels_2d()[0], self.display.get_num_pixels_2d()[1])
-        #full_frame[self.start_index[0]:self.end_index[0], self.start_index[1]:self.end_index[1]] = flatten_frame
         full_frame[self.start_index[1]:self.end_index[1], self.start_index[0]:self.end_index[0]] = flatten_frame
 
         frame = full_frame.flatten()
-        self.display.send_frame(0, frame)
+        #print("locked")
+        if self.mutex.acquire():
+            #print("unlocked")
+            self.display.send_frame(frame)
+        
 
     def __clear(self):
-        self.__send_frame(utils.get_colorless_array_1d(self.length))
+        self.__send_frame(utils.get_colorless_array_2d(self.width, self.height))
 
     def off(self, args):
         self.__clear()
@@ -67,21 +70,22 @@ class TwoDimAnim(__Anim):
         color = utils.array_to_tuple(args["color"]) if "color" in args else (0,0,255)
         wait_ms = args["wait_ms"] if "wait_ms" in args else 0.05
         reverse = args["reverse"] if "reverse" in args else False
-        start = 0 if not reverse else self.length-1
-        end = -1 if reverse else self.length
-        step = 1 if not reverse else -1
+        #start = 0 if not reverse else self.length-1
+        #end = -1 if reverse else self.length
+        #step = 1 if not reverse else -1
         
         """Wipe color across display a pixel at a time."""
         while True:
             self.__clear()
-            for i in range(start, end, step):
-                frame = utils.get_void_array_1d(self.length)
-                frame[i] = color
-            
-                self.__send_frame(frame)
-                if (self.isCancelled):
-                    return
-                time.sleep(wait_ms)
+            frame = utils.get_colorless_array_2d(self.width, self.height)
+            for i in range(len(frame)):
+
+                for j in range(len(frame[i])):
+                    frame[i][j] = color
+                    self.__send_frame(frame)
+                    if (self.isCancelled):
+                        return
+                    time.sleep(wait_ms)
 
     
 

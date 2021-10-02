@@ -1,11 +1,21 @@
 import constants as constants
 from rpi_ws281x import Color, PixelStrip, ws
+import time
+from threading import Thread
 
 class Display():
-    def __init__(self):
+    def __init__(self):        
+        self.CancelRefresh = False
+        self.refreshThread = None
+        self.anim_mutexes = []
         self.set_factory_strip_config()
 
     def __initialize_strip(self):
+        if self.refreshThread != None:
+            self.CancelRefresh = True
+            self.refreshThread.join()
+            self.CancelRefresh = False
+
         if self.strip_config["LED_LAYOUT"] == 1:
             self.strip_config["LED_COUNT"] = self.strip_config["LED_WIDTH"] * self.strip_config["LED_HEIGHT"]
         self.strip = PixelStrip(self.strip_config["LED_COUNT"],
@@ -16,7 +26,24 @@ class Display():
                                 self.strip_config["LED_BRIGHTNESS"],
                                 self.strip_config["LED_CHANNEL"],
                                 self.strip_config["LED_STRIP"])
-        self.strip.begin()
+        self.strip.begin()       
+            
+        self.refreshThread = Thread(target=self.__refresh_strip_frame, args=())
+        self.refreshThread.start()     
+
+    def __refresh_strip_frame(self):
+        while not self.CancelRefresh:
+            for mutex in self.anim_mutexes:
+                if mutex.locked():
+                    mutex.release()
+            time.sleep(0.005)
+            #start = time.time()
+            self.strip.show()
+            #end = time.time()
+            #print(f"{(end - start) * 1000} ms")
+            #print("release")
+            
+            
 
     def set_factory_strip_config(self):
         self.strip_config = {
@@ -90,25 +117,25 @@ class Display():
             return self.strip.getPixelColorRGBW(index)
         return self.strip.getPixelColorRGB(index)
 
-    def send_frame(self, index, next_frame):        
+    def send_frame(self, next_frame):        
         try:
             if self.strip_config["LED_LAYOUT"] == 0:
-                self.__display_frame_1d(index, next_frame)
+                self.__display_frame_1d(next_frame)
             elif self.strip_config["LED_LAYOUT"] == 1:
-                self.__display_frame_2d_up_north_snake(index, next_frame)
+                self.__display_frame_2d_up_north_snake(next_frame)
         except Exception as e: 
             print("Unkown error: " + e)
     
-    def __display_frame_1d(self, index, frame):
+    def __display_frame_1d(self, frame):
         for i, led in enumerate(frame):
             if led != None:
                 if len(led) == 4:
-                    self.strip.setPixelColor(i+index, Color(led[0], led[1], led[2], led[3]))
+                    self.strip.setPixelColor(i, Color(led[0], led[1], led[2], led[3]))
                 else:    
-                    self.strip.setPixelColor(i+index, Color(led[0], led[1], led[2], 0))
-        self.strip.show()
+                    self.strip.setPixelColor(i, Color(led[0], led[1], led[2], 0))
+        #self.strip.show()
     
-    def __display_frame_2d_up_north_snake(self, index, frame):
+    def __display_frame_2d_up_north_snake(self, frame):
         PANEL_HEIGHT = 16
         PANEL_WIDTH = 16
         PANEL_LEDS = PANEL_WIDTH * PANEL_HEIGHT
@@ -134,5 +161,4 @@ class Display():
             k = k + 1
             if k == 3:
                 k = 0
-        
-        self.strip.show()
+        #self.strip.show()

@@ -5,8 +5,8 @@ from animations.anim import __Anim
 from random import *
 
 class OneDimAnim(__Anim):
-    def __init__(self, p_display, p_segment):
-        super().__init__(p_display, p_segment)
+    def __init__(self, p_display, p_segment, p_mutex):
+        super().__init__(p_display, p_segment, p_mutex)
         self.start_index = p_segment[0]
         self.end_index = p_segment[1]
         self.length = self.end_index - self.start_index + 1
@@ -23,7 +23,13 @@ class OneDimAnim(__Anim):
                         break
         else:
             frame = next_frame
-        self.display.send_frame(self.start_index, frame)
+
+        full_frame = [None] * 5 + [(12, 12, 12), (12, 12, 12), (12, 12, 12)] + [None] * 5
+
+        #print("locked")
+        if self.mutex.acquire():
+            #print("unlocked")
+            self.display.send_frame([None] * self.start_index + frame)
 
     def __clear(self):
         self.__send_frame(utils.get_colorless_array_1d(self.length))
