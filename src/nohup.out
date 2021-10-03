@@ -192,3 +192,69 @@ Started one dimension process thread
    WARNING: This is a development server. Do not use it in a production deployment.
  * Running on http://192.168.1.179:80/ (Press CTRL+C to quit)
 192.168.1.122 - - [16/Sep/2021 22:30:59] "GET /api/led/animation HTTP/1.1" 200 -
+Hello world !
+403181568
+Setting configurations from file:
+{
+    "LED_COUNT": 144,
+    "LED_PIN": 18,
+    "LED_FREQ_HZ": 800000,
+    "LED_DMA": 10,
+    "LED_INVERT": false,
+    "LED_BRIGHTNESS": 100,
+    "LED_CHANNEL": 0,
+    "LED_STRIP": 403181568,
+    "LED_WIDTH": 48,
+    "LED_HEIGHT": 48,
+    "LED_LAYOUT": 0
+}
+Started one dimension process thread
+ * Serving Flask app 'main' (lazy loading)
+> Command segment
+TERMINATED
+> Command animation
+TERNATED
+ * Environment: production
+   WARNING: This is a development server. Do not use it in a production deployment.
+   Use a production WSGI server instead.
+ * Debug mode: off
+Exception in thread Thread-4:
+Traceback (most recent call last):
+  File "/usr/lib/python3.7/threading.py", line 917, in _bootstrap_inner
+    self.run()
+  File "/usr/lib/python3.7/threading.py", line 865, in run
+    self._target(*self._args, **self._kwargs)
+  File "/home/pi/SpectrumLight/src/animations/one_dim_anim.py", line 331, in labyrinth
+    frame[points[i].x] = (0, 0, 0, 0)
+IndexError: list assignment index out of range
+
+ * Running on all addresses.
+   WARNING: This is a development server. Do not use it in a production deployment.
+ * Running on http://192.168.1.179:80/ (Press CTRL+C to quit)
+Hello world !
+403181568
+Setting configurations from file:
+{
+    "LED_COUNT": 144,
+    "LED_PIN": 18,
+    "LED_FREQ_HZ": 800000,
+    "LED_DMA": 10,
+    "LED_INVERT": false,
+    "LED_BRIGHTNESS": 100,
+    "LED_CHANNEL": 0,
+    "LED_STRIP": 403181568,
+    "LED_WIDTH": 48,
+    "LED_HEIGHT": 48,
+    "LED_LAYOUT": 0
+}
+Started one dimension process thread
+ * Serving Flask app 'main' (lazy loading)
+ * Environment: production
+   WARNING: This is a development server. Do not use it in a production deployment.
+   Use a production WSGI server instead.
+ * Debug mode: off
+ * Running on all addresses.
+   WARNING: This is a development server. Do not use it in a production deployment.
+ * Running on http://192.168.1.179:80/ (Press CTRL+C to quit)
+192.168.1.105 - - [03/Oct/2021 20:18:43] "GET /api/led/animation/ HTTP/1.1" 200 -
+192.168.1.105 - - [03/Oct/2021 20:18:45] "GET /api/led/animation/ HTTP/1.1" 200 -

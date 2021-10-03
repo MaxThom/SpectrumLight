@@ -9,8 +9,8 @@ LED_BRIGHTNESS = 20    # Set to 0 for darkest and 255 for brightest
 LED_INVERT = False     # True to invert the signal (when using NPN transistor level shift)
 LED_CHANNEL = 0
 ##LED_STRIP = ws.SK6812_STRIP_RGBW
-#LED_STRIP = ws.SK6812W_STRIP
-LED_STRIP = ws.WS2812_STRIP
+LED_STRIP = ws.SK6812W_STRIP
+#LED_STRIP = ws.WS2812_STRIP #403181568
 LED_WIDTH = 48
 LED_HEIGHT = 48
 LED_LAYOUT = 1 # 0 = 1d, 1 = 2d south_north_snake
