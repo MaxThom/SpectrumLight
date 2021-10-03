@@ -81,16 +81,18 @@ The web server (flask) and ledstrip connection on the rpi are made with Python3.
 *September 2021*
 - [x] - Create Hotspot and Wifi feature
 - [ ] - IMU Integration
-- [ ] - Create the device with the rpi, wires, led matrices and power supply
-- [ ] - Control the leds using python
+- [x] - Create the device with the rpi, wires, led matrices and power supply
+- [x] - Control the leds using python
 - [ ] - Configure Raspbian to autolaunch the script on bootup
 - [ ] - Auto update the server from git
-- [ ] - Create a phone app using Xamarin and learn the basics
-- [ ] - Add handshake when initializing connections to discover servers capabilities (animations, etc)
-- [ ] - Create a dynamic UI for animations
-- [ ] - Create playlist for animations
-- [ ] - Create segments on the leds for animations to target those sections
-- [ ] - Add more animations
-- [ ] - Add different ledstrip type (SK6812)
+- [x] - Being universal on strip type
+- [x] - Being universal on strip dimension (1d or 2d)
+- [x] - Be able to split the strip in segments and play different animation in each
+- [ ] - Create a web server for UI
+- [x] - Create a web api to control the strip
+- [x] - Being able to change strip settings
+- [ ] - Add utils to create animations (layers, polygons, etc)
+- [x] - Add 1d animations
+- [ ] - Add 2d animations
 
 
