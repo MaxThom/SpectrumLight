@@ -43,6 +43,7 @@ def get_animation():
 
 @animation_bp.route('/brightness/', methods=["POST", "GET"], strict_slashes=False)
 def set_brightness():
+  global display
   rtn = {}
   if request.method == "POST":
     try:
@@ -74,6 +75,7 @@ def set_brightness():
 
 @animation_bp.route('/configuration/', methods=["POST", "GET"], strict_slashes=False)
 def get_config():
+  global display
   rtn = {}
   if request.method == "POST":
     try:

@@ -2,48 +2,68 @@ import constants as constants
 from rpi_ws281x import Color, PixelStrip, ws
 import time
 from threading import Thread
+import json
+import os.path
 
 class Display():
     def __init__(self):        
         self.CancelRefresh = False
         self.refreshThread = None
         self.anim_mutexes = []
-        self.set_factory_strip_config()
+
+        if os.path.isfile(constants.LED_CONFIG_FILE_PATH):
+            # load
+            self.__read_config_file()
+            self.__initialize_strip()
+            print("Setting configurations from file:")
+            print(json.dumps(self.strip_config, indent=4))
+        else:
+            self.set_factory_strip_config()
+            print("Setting configurations from default:")
+            print(json.dumps(self.strip_config, indent=4))
 
     def __initialize_strip(self):
         if self.refreshThread != None:
             self.CancelRefresh = True
             self.refreshThread.join()
             self.CancelRefresh = False
-
-        if self.strip_config["LED_LAYOUT"] == 1:
-            self.strip_config["LED_COUNT"] = self.strip_config["LED_WIDTH"] * self.strip_config["LED_HEIGHT"]
-        self.strip = PixelStrip(self.strip_config["LED_COUNT"],
-                                self.strip_config["LED_PIN"],
-                                self.strip_config["LED_FREQ_HZ"],
-                                self.strip_config["LED_DMA"],
-                                self.strip_config["LED_INVERT"],
-                                self.strip_config["LED_BRIGHTNESS"],
-                                self.strip_config["LED_CHANNEL"],
-                                self.strip_config["LED_STRIP"])
-        self.strip.begin()       
+        try:
+            if self.strip_config["LED_LAYOUT"] == 1:
+                self.strip_config["LED_COUNT"] = self.strip_config["LED_WIDTH"] * self.strip_config["LED_HEIGHT"]
             
-        self.refreshThread = Thread(target=self.__refresh_strip_frame, args=())
-        self.refreshThread.start()     
+            self.strip = PixelStrip(self.strip_config["LED_COUNT"],
+                                    self.strip_config["LED_PIN"],
+                                    self.strip_config["LED_FREQ_HZ"],
+                                    self.strip_config["LED_DMA"],
+                                    self.strip_config["LED_INVERT"],
+                                    self.strip_config["LED_BRIGHTNESS"],
+                                    self.strip_config["LED_CHANNEL"],
+                                    self.strip_config["LED_STRIP"])            
+            self.strip.begin()
+            self.strip.begin()
+            self.refreshThread = Thread(target=self.__refresh_strip_frame, args=())
+            self.refreshThread.start() 
+        except Exception as e: 
+                print("Unkown error: " + e)
 
     def __refresh_strip_frame(self):
         while not self.CancelRefresh:
             for mutex in self.anim_mutexes:
                 if mutex.locked():
                     mutex.release()
-            time.sleep(0.005)
+            time.sleep(0.001)
             #start = time.time()
             self.strip.show()
             #end = time.time()
             #print(f"{(end - start) * 1000} ms")
-            #print("release")
-            
-            
+    
+    def __write_config_file(self):
+        with open(constants.LED_CONFIG_FILE_PATH, 'w') as fp:
+            json.dump(self.strip_config, fp, indent=4)
+    
+    def __read_config_file(self):
+        with open(constants.LED_CONFIG_FILE_PATH) as fp:            
+            self.strip_config = json.load(fp)
 
     def set_factory_strip_config(self):
         self.strip_config = {
@@ -59,32 +79,35 @@ class Display():
             "LED_HEIGHT": constants.LED_HEIGHT,
             "LED_LAYOUT": constants.LED_LAYOUT
         }
+
+        self.__write_config_file()
         self.__initialize_strip()
 
     def set_strip_config(self, args):
-        if "LED_COUNT" in args and args["LED_COUNT"]:            
+        if "LED_COUNT" in args:            
             self.strip_config["LED_COUNT"] = args["LED_COUNT"]
-        if "LED_PIN" in args and args["LED_PIN"]:
+        if "LED_PIN" in args:
             self.strip_config["LED_PIN"] = args["LED_PIN"]
-        if "LED_FREQ_HZ" in args and args["LED_FREQ_HZ"]:
+        if "LED_FREQ_HZ" in args:
             self.strip_config["LED_FREQ_HZ"] = args["LED_FREQ_HZ"]
-        if "LED_DMA" in args and args["LED_DMA"]:
+        if "LED_DMA" in args:
             self.strip_config["LED_DMA"] = args["LED_DMA"]
-        if "LED_INVERT" in args and args["LED_INVERT"]:
+        if "LED_INVERT" in args:
             self.strip_config["LED_INVERT"] = args["LED_INVERT"]
-        if "LED_BRIGHTNESS" in args and args["LED_BRIGHTNESS"]:
+        if "LED_BRIGHTNESS" in args:
             self.strip_config["LED_BRIGHTNESS"] = args["LED_BRIGHTNESS"]
-        if "LED_CHANNEL" in args and args["LED_CHANNEL"]:
+        if "LED_CHANNEL" in args:
             self.strip_config["LED_CHANNEL"] = args["LED_CHANNEL"]
-        if "LED_STRIP" in args and args["LED_STRIP"]:
+        if "LED_STRIP" in args:
             self.strip_config["LED_STRIP"] = args["LED_STRIP"]
-        if "LED_WIDTH" in args and args["LED_WIDTH"]:
+        if "LED_WIDTH" in args:
             self.strip_config["LED_WIDTH"] = args["LED_WIDTH"]
-        if "LED_HEIGHT" in args and args["LED_HEIGHT"]:
+        if "LED_HEIGHT" in args:
             self.strip_config["LED_HEIGHT"] = args["LED_HEIGHT"]
-        if "LED_LAYOUT" in args and args["LED_LAYOUT"]:
+        if "LED_LAYOUT" in args:
             self.strip_config["LED_LAYOUT"] = args["LED_LAYOUT"]
-
+        
+        self.__write_config_file()
         self.__initialize_strip()
 
     def get_strip_config(self):
@@ -106,7 +129,7 @@ class Display():
         self.strip_config["LED_BRIGHTNESS"] = brightness
         self.strip.setBrightness(brightness)
 
-    def get_pixels_color(self):
+    def get_pixels_color_all(self):
         return self.strip.getPixels()
 
     def get_pixels_color(self, index):
@@ -161,4 +184,5 @@ class Display():
             k = k + 1
             if k == 3:
                 k = 0
+        #print("show")
         #self.strip.show()

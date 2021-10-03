@@ -43,6 +43,7 @@ class ProcessManagers(Thread):
             dimension = cmd["dimension"]
             config = cmd["configuration"]
             if segment >= len(self.onGoingAnim):
+                print("Segment does not exist!")
                 return
             next_anim = self.create_animation_for_display(dimension, self.display, self.segments[segment], self.display.anim_mutexes[segment])
             if not hasattr(next_anim, anim):
@@ -72,12 +73,14 @@ class ProcessManagers(Thread):
 
     def join_all_threads(self):
         for th in self.onGoingAnim:
-            th.isCancelled = True
+            if (th != None):
+                th.isCancelled = True
         for th in self.onGoingThread:
             if (th != None):                
                 th.join()
         for th in self.onGoingAnim:
-            th.isCancelled = False
+            if (th != None):
+                th.isCancelled = False
 
     def join_thread(self, index):
         if (self.onGoingThread[index] != None):

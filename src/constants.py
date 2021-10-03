@@ -1,7 +1,7 @@
 from rpi_ws281x import Color, PixelStrip, ws
 
 # LED strip configuration:
-LED_COUNT = 2403        # Number of LED pixels.
+LED_COUNT = 2304        # Number of LED pixels.
 LED_PIN = 18           # GPIO pin connected to the pixels (must support PWM!).
 LED_FREQ_HZ = 800000   # LED signal frequency in hertz (usually 800khz)
 LED_DMA = 10           # DMA channel to use for generating signal (try 10)
@@ -19,3 +19,6 @@ LED_LAYOUT = 1 # 0 = 1d, 1 = 2d south_north_snake
 TH_PRIORITY_HIGH = 0.0100
 TH_PRIORITY_MEDIUM = 0.0200
 TH_PRIORITY_LOW = 0.0300
+
+# Configs
+LED_CONFIG_FILE_PATH = "../configs/config"

@@ -34,7 +34,7 @@ class TwoDimAnim(__Anim):
         frame = full_frame.flatten()
         #print("locked")
         if self.mutex.acquire():
-            #print("unlocked")
+        #print("unlocked")
             self.display.send_frame(frame)
         
 

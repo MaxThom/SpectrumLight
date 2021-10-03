@@ -28,7 +28,7 @@ class OneDimAnim(__Anim):
 
         #print("locked")
         if self.mutex.acquire():
-            #print("unlocked")
+        #    print("unlocked")
             self.display.send_frame([None] * self.start_index + frame)
 
     def __clear(self):
