@@ -22,6 +22,9 @@ def get_colorless_array_2d(width, height):
 def array_to_tuple(array):
     return tuple(array)
 
+def array_to_int_tuple(array):
+    return tuple(int(x) for x in array)
+
 def add_void_layer_1d(array, init_value=None):
     if type(array[0]).__name__ != "list":
         array = [array]

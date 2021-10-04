@@ -3,14 +3,16 @@ import math
 import animations.array_utils as utils
 from animations.anim import __Anim
 from random import *
+from PIL import Image
+import numpy as np
 
 class TwoDimAnim(__Anim):
     def __init__(self, p_display, p_segment, p_mutex):
         super().__init__(p_display, p_segment, p_mutex)
         self.start_index = (p_segment[0], p_segment[1])
         self.end_index = (p_segment[2], p_segment[3])
-        self.width = self.end_index[0] - self.start_index[0]
-        self.height = self.end_index[1] - self.start_index[1]
+        self.width = self.end_index[0] - self.start_index[0] + 1
+        self.height = self.end_index[1] - self.start_index[1] + 1
         print(self.start_index, self.end_index)
         print(self.width, self.height)
 
@@ -29,14 +31,13 @@ class TwoDimAnim(__Anim):
 
         # Add sub
         full_frame = utils.get_void_array_2d(self.display.get_num_pixels_2d()[0], self.display.get_num_pixels_2d()[1])
-        full_frame[self.start_index[1]:self.end_index[1], self.start_index[0]:self.end_index[0]] = flatten_frame
+        full_frame[self.start_index[1]:self.end_index[1]+1, self.start_index[0]:self.end_index[0]+1] = flatten_frame
 
         frame = full_frame.flatten()
         #print("locked")
         if self.mutex.acquire():
         #print("unlocked")
             self.display.send_frame(frame)
-        
 
     def __clear(self):
         self.__send_frame(utils.get_colorless_array_2d(self.width, self.height))
@@ -48,12 +49,25 @@ class TwoDimAnim(__Anim):
     # Args: color, wait_ms, reverse
     #
     def test(self, args):
-        frame = utils.get_colorless_array_2d(self.width, self.height)
-        frame[0][2] = (255, 0, 0)
-        frame[2][2] = (255, 0, 0)
-        frame[2][2] = (255, 0, 0)
-        
+        img = np.array(Image.open('../anim_frames/cannabis.png'))
+        #print(img)
+        #print(np.shape(img))
+        #x = np.empty((im.shape[0], im.shape[1]), dtype=tuple)
+        frame = utils.get_void_array_2d(img.shape[0], img.shape[1])
+
+        #x.fill(init_value)
+        for ix,iy,iz in np.ndindex(img.shape):
+            frame[ix,iy] = utils.array_to_int_tuple(img[ix,iy])
+            #print(tuple(im[ix,iy]))
+        #print(x)
+        print(frame)
         self.__send_frame(frame)
+
+        # Todo
+        # 1. Make it work for under 48 pixels
+        # 2. Use better library for loading speed and resize (only if bigger than 48)
+        # 3. Settings frame [image_path, wait_ms]
+        # 4. Make it work for gifs
 
     #
     # Args: color, wait_ms, reverse

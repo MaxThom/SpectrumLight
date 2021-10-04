@@ -2,9 +2,6 @@ from rpi_ws281x import Color, PixelStrip, ws
 import time
 from threading import Thread
 import random
-from PIL import Image
-import numpy as np
-#from scipy import misc
 
 # LED strip configuration:
 LED_COUNT = 2304        # Number of LED pixels.
@@ -18,39 +15,52 @@ LED_CHANNEL = 0
 #LED_STRIP = ws.SK6812W_STRIP
 LED_STRIP = ws.WS2812_STRIP
 
+LED_2_COUNT = 768       # Number of LED pixels.
+LED_2_PIN = 13          # GPIO pin connected to the pixels (must support PWM! GPIO 13 or 18 on RPi 3).
+LED_2_FREQ_HZ = 800000  # LED signal frequency in hertz (usually 800khz)
+LED_2_DMA = 10          # DMA channel to use for generating signal (Between 1 and 14)
+LED_2_BRIGHTNESS = 20   # Set to 0 for darkest and 255 for brightest
+LED_2_INVERT = False    # True to invert the signal (when using NPN transistor level shift)
+LED_2_CHANNEL = 1       # 0 or 1
+LED_2_STRIP = ws.WS2812_STRIP
+
+LED_3_COUNT = 768       # Number of LED pixels.
+LED_3_PIN = 21          # GPIO pin connected to the pixels (must support PWM! GPIO 13 or 18 on RPi 3).
+LED_3_FREQ_HZ = 800000  # LED signal frequency in hertz (usually 800khz)
+LED_3_DMA = 10          # DMA channel to use for generating signal (Between 1 and 14)
+LED_3_BRIGHTNESS = 20   # Set to 0 for darkest and 255 for brightest
+LED_3_INVERT = False    # True to invert the signal (when using NPN transistor level shift)
+LED_3_CHANNEL = 0       # 0 or 1
+LED_3_STRIP = ws.WS2812_STRIP
+
+
 def init_animation():
     print('> Starting LED animation...')
     strip = PixelStrip(LED_COUNT, LED_PIN, LED_FREQ_HZ, LED_DMA, LED_INVERT, LED_BRIGHTNESS, LED_CHANNEL, LED_STRIP)
+    #strip2 = PixelStrip(LED_2_COUNT, LED_2_PIN, LED_2_FREQ_HZ, LED_2_DMA, LED_2_INVERT, LED_2_BRIGHTNESS, LED_2_CHANNEL, LED_2_STRIP)
+    #strip3 = PixelStrip(LED_3_COUNT, LED_3_PIN, LED_3_FREQ_HZ, LED_3_DMA, LED_3_INVERT, LED_3_BRIGHTNESS, LED_3_CHANNEL, LED_3_STRIP)
     strip.begin()
-    get_image_rgb_array()
-    color_clear(strip)
+    #strip2.begin()
+    #strip3.begin()
+    
+    #color_wipe_ms_triple(strip, strip2, strip3)
+    #color_wipe_ms(strip, strip2, strip3)
+    #color_blink_ms(strip, strip2, strip3)
+
+    #th_strip1 = Thread(target=color_wipe_infinite, args=(strip, Color(0, 255, 0)))
+    #th_strip2 = Thread(target=color_wipe_infinite, args=(strip2, Color(0, 0, 255)))
+    #th_strip3 = Thread(target=color_wipe_infinite, args=(strip3, Color(255, 0, 0)))
+    #th_strip1.start()
+    #th_strip2.start()
+    #th_strip3.start()
+
     while True:
         color_wipe(strip, Color(255, 0, 0))  # Red wipe
         color_wipe(strip, Color(0, 255, 0))  # Gree wipe
         color_wipe(strip, Color(0, 0, 255))  # Blue wipe
        
        #color_wipe(strip, Color(0, 0, 0, 255))  # White wipe
-
-def get_image_rgb_array():
-    im = np.array(Image.open('../anim_frames/anim_test.bmp'))
-    #im = np.array(im.tolist())
-    print(im)
-    print(np.shape(im))
-    print(im.dtype)
-    #new_im = im.view(dtype=np.dtype([('x', im.dtype), ('y', im.dtype)]))
-    #new_im = new_im.reshape(new_im.shape[:-1])
-    #print(new_im)
-    x = np.empty((im.shape[0], im.shape[1]), dtype=tuple)
-    #x.fill(init_value)
-    for ix,iy,iz in np.ndindex(im.shape):
-        x[ix,iy] = tuple(im[ix,iy])
-        print(tuple(im[ix,iy]))
-    print(x)
-    #arr = misc.imread('../anim_frames/anim_test.bmp') # 640x480x3 array
-    #print(arr)
-    #printt(np.shape(arr))
-
-
+ 
 def color_full(strip):
     """Wipe color across display a pixel at a time."""
     color = [None] * 9
@@ -66,7 +76,8 @@ def color_full(strip):
     for i in range(0, strip.numPixels(), 256):
         for j in range(i, i+256, 1):
             strip.setPixelColor(j, color[i // 256])
-        strip.show()      
+        strip.show()
+        
 
 def color_wipe(strip, color, wait_ms=50):
     """Wipe color across display a pixel at a time."""
@@ -164,6 +175,8 @@ def color_blink_ms(strip1, strip2, strip3):
 
 
         time.sleep(100/1000)
+
+
 
 def color_clear(strip):
     for i in range(strip.numPixels()):
