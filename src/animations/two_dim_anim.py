@@ -1,10 +1,12 @@
 import time
 import math
 import animations.array_utils as utils
+import animations.img_utils as img_utils
 from animations.anim import __Anim
 from random import *
-from PIL import Image
+from skimage import io, transform
 import numpy as np
+import os
 
 class TwoDimAnim(__Anim):
     def __init__(self, p_display, p_segment, p_mutex):
@@ -48,26 +50,45 @@ class TwoDimAnim(__Anim):
     #
     # Args: color, wait_ms, reverse
     #
-    def test(self, args):
-        img = np.array(Image.open('../anim_frames/cannabis.png'))
-        #print(img)
-        #print(np.shape(img))
-        #x = np.empty((im.shape[0], im.shape[1]), dtype=tuple)
-        frame = utils.get_void_array_2d(img.shape[0], img.shape[1])
+    def image_display(self, args):
+        image_name = args["image_name"] if "image_name" in args else "Ninject.png"
+        image_ratio = args["image_ratio"] if "image_ratio" in args else "fit" # or fill
+        img_frame = None
+        
+        if os.path.isfile(f'../anim_frames_processed/{image_name}_{image_ratio}'):
+            with open(f'../anim_frames_processed/{image_name}_{image_ratio}', 'rb') as f:
+                img_frame = np.load(f, allow_pickle=True)
+        else:
+            # Read and resize image
+            img = io.imread(f'../anim_frames/{image_name}')
+            img_width, img_height = (None, None)
+            if image_ratio == "fit":
+                img_width, img_height = img_utils.adjust_image_to_size(img.shape[0], img.shape[1], self.width, self.height)
+            elif image_ratio == "fill":
+                img_width, img_height = (self.width, self.height)
+            img_resized = img_utils.resize_image(img, img_width, img_height)
 
-        #x.fill(init_value)
-        for ix,iy,iz in np.ndindex(img.shape):
-            frame[ix,iy] = utils.array_to_int_tuple(img[ix,iy])
-            #print(tuple(im[ix,iy]))
-        #print(x)
-        print(frame)
+            # Transform array to tuple
+            img_frame = img_utils.transform_image_color_to_tuple(img_height, img_width, img_resized)
+
+            # Save processed image
+            with open(f'../anim_frames_processed/{image_name}_{image_ratio}', 'wb') as f:
+                np.save(f, img_frame)
+
+        # Center image
+        frame = img_utils.center_image_frame(self.width, self.height, img_frame)
+        
+        #print(frame)
         self.__send_frame(frame)
 
         # Todo
-        # 1. Make it work for under 48 pixels
-        # 2. Use better library for loading speed and resize (only if bigger than 48)
-        # 3. Settings frame [image_path, wait_ms]
-        # 4. Make it work for gifs
+        # 1. [x] - Make it work for under 48 pixels
+        # 2. [x] - Use better library for loading speed and resize (only if bigger than 48)
+        # 3. [x] - Center image in frame
+        # 4. [x] - Save image
+        # 5. [x] - Load image
+        # 6. [x] - Settings frame [image_path, ratio]
+        # 7. [] - Make it work for gifs
 
     #
     # Args: color, wait_ms, reverse

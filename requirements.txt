@@ -5,4 +5,15 @@ Jinja2==3.0.1
 requests==2.21.0
 rpi-ws281x==4.3.0
 RPi.GPIO==0.7.0
+smbus2==0.4.1
+imusensor==1.0.1
+easydict==1.9
+scikit-image==0.18.3
 
+#sudo apt-get install python3-smbus
+#sudo apt-get install i2c-tools
+#sudo pip3 install numpy
+#sudo pip3 install scipy
+#sudo pip3 --no-cache-dir install matplotlib
+#sudo pip3 -U install scikit-image
+# sudo apt-get install libatlas-base-dev gfortran

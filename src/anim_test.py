@@ -4,7 +4,9 @@ from threading import Thread
 import random
 from PIL import Image
 import numpy as np
-#from scipy import misc
+#import cv2
+from skimage import io, transform
+#from skimage.transform import resize, rescale
 
 # LED strip configuration:
 LED_COUNT = 2304        # Number of LED pixels.
@@ -23,32 +25,82 @@ def init_animation():
     strip = PixelStrip(LED_COUNT, LED_PIN, LED_FREQ_HZ, LED_DMA, LED_INVERT, LED_BRIGHTNESS, LED_CHANNEL, LED_STRIP)
     strip.begin()
     get_image_rgb_array()
-    color_clear(strip)
-    while True:
-        color_wipe(strip, Color(255, 0, 0))  # Red wipe
-        color_wipe(strip, Color(0, 255, 0))  # Gree wipe
-        color_wipe(strip, Color(0, 0, 255))  # Blue wipe
-       
-       #color_wipe(strip, Color(0, 0, 0, 255))  # White wipe
+    #color_clear(strip)
+    #while True:
+    #    color_wipe(strip, Color(255, 0, 0))  # Red wipe
+    #    color_wipe(strip, Color(0, 255, 0))  # Gree wipe
+    #    color_wipe(strip, Color(0, 0, 255))  # Blue wipe
+    #   
+    #   #color_wipe(strip, Color(0, 0, 0, 255))  # White wipe
 
 def get_image_rgb_array():
-    im = np.array(Image.open('../anim_frames/anim_test.bmp'))
-    #im = np.array(im.tolist())
-    print(im)
-    print(np.shape(im))
-    print(im.dtype)
-    #new_im = im.view(dtype=np.dtype([('x', im.dtype), ('y', im.dtype)]))
-    #new_im = new_im.reshape(new_im.shape[:-1])
-    #print(new_im)
-    x = np.empty((im.shape[0], im.shape[1]), dtype=tuple)
-    #x.fill(init_value)
-    for ix,iy,iz in np.ndindex(im.shape):
-        x[ix,iy] = tuple(im[ix,iy])
-        print(tuple(im[ix,iy]))
-    print(x)
-    #arr = misc.imread('../anim_frames/anim_test.bmp') # 640x480x3 array
-    #print(arr)
-    #printt(np.shape(arr))
+    print("loading")
+    image_name = "plane_height_small.png"
+    im = io.imread(f'../anim_frames/{image_name}')
+    #print(im)
+    #print(np.shape(im))
+    print("loading done")
+
+    MAX_WIDTH = 24
+    MAX_HEIGHT = 48
+
+    original_width = int(im.shape[1])
+    original_height = int(im.shape[0])
+    if original_width > original_height:        
+        width = int(MAX_WIDTH)
+        height = int(original_height / (original_width / MAX_WIDTH))
+        if height > MAX_HEIGHT:            
+            width = int(width / (height / MAX_HEIGHT))
+            height = int(MAX_HEIGHT)
+    else:
+        height = int(MAX_HEIGHT)
+        width = int(original_width / (original_height / MAX_HEIGHT))
+        if width > MAX_WIDTH:            
+            height = int(height / (width / MAX_WIDTH))
+            width = int(MAX_WIDTH)
+        
+        
+   
+    print(width, height)
+    #img_rescaled = transform.rescale(im, 0.16, anti_aliasing=False)
+    #print(img_rescaled.shape)
+    #print(img_rescaled)
+    
+    image_resized = transform.resize(im, (width, height), anti_aliasing=True)
+    print(image_resized.shape)
+    image_resized = 255 * image_resized
+    image_resized = image_resized.astype(np.uint8)
+    print(image_resized)
+
+    #frame = utils.get_colorless_array_2d(self.width, self.height)
+    for ix,iy,iz in np.ndindex(image_resized.shape):
+        image_resized[ix,iy] = tuple(image_resized[ix,iy])
+    print(image_resized)
+    #io.imshow(image_resized)
+    #img = Image.fromarray(image_resized, 'RGB')
+    #img.show()
+    #io.imsave(f"../anim_frames_processed/{image_name}", image_resized)
+    #dsize = (width, height)
+    #output = cv2.resize(src, dsize)
+    #cv2.imwrite('../anim_frames/processed.bmp',output) 
+
+    #im = np.array(Image.open('../anim_frames/anim_test.bmp'))
+    ##im = np.array(im.tolist())
+    #print(im)
+    #print(np.shape(im))
+    #print(im.dtype)
+    ##new_im = im.view(dtype=np.dtype([('x', im.dtype), ('y', im.dtype)]))
+    ##new_im = new_im.reshape(new_im.shape[:-1])
+    ##print(new_im)
+    #x = np.empty((im.shape[0], im.shape[1]), dtype=tuple)
+    ##x.fill(init_value)
+    #for ix,iy,iz in np.ndindex(im.shape):
+    #    x[ix,iy] = tuple(im[ix,iy])
+    #    print(tuple(im[ix,iy]))
+    #print(x)
+    ##arr = misc.imread('../anim_frames/anim_test.bmp') # 640x480x3 array
+    ##print(arr)
+    ##printt(np.shape(arr))
 
 
 def color_full(strip):
