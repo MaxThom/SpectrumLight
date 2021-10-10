@@ -35,9 +35,9 @@ def init_animation():
 
 def get_image_rgb_array():
     print("loading")
-    image_name = "plane_height_small.png"
+    image_name = "banana.gif"
     im = io.imread(f'../anim_frames/{image_name}')
-    #print(im)
+    print(im)
     print(np.shape(im))
     print("loading done")
 
