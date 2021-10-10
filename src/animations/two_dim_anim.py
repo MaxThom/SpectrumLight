@@ -54,25 +54,25 @@ class TwoDimAnim(__Anim):
         image_name = args["image_name"] if "image_name" in args else "Ninject.png"
         image_ratio = args["image_ratio"] if "image_ratio" in args else "fit" # or fill
         img_frame = None
-        
-        if os.path.isfile(f'../anim_frames_processed/{image_name}_{image_ratio}'):
-            with open(f'../anim_frames_processed/{image_name}_{image_ratio}', 'rb') as f:
+        processed_image_name = f"{image_name}_{image_ratio}_{self.width}_{self.height}"
+        if os.path.isfile(f'../anim_frames_processed/{processed_image_name}'):
+            with open(f'../anim_frames_processed/{processed_image_name}', 'rb') as f:
                 img_frame = np.load(f, allow_pickle=True)
         else:
             # Read and resize image
             img = io.imread(f'../anim_frames/{image_name}')
             img_width, img_height = (None, None)
             if image_ratio == "fit":
-                img_width, img_height = img_utils.adjust_image_to_size(img.shape[0], img.shape[1], self.width, self.height)
+                img_width, img_height = img_utils.adjust_image_to_size(img.shape[1], img.shape[0], self.width, self.height)
             elif image_ratio == "fill":
                 img_width, img_height = (self.width, self.height)
             img_resized = img_utils.resize_image(img, img_width, img_height)
-
+            
             # Transform array to tuple
             img_frame = img_utils.transform_image_color_to_tuple(img_height, img_width, img_resized)
 
             # Save processed image
-            with open(f'../anim_frames_processed/{image_name}_{image_ratio}', 'wb') as f:
+            with open(f'../anim_frames_processed/{processed_image_name}', 'wb') as f:
                 np.save(f, img_frame)
 
         # Center image

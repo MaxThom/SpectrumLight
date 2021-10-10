@@ -20,19 +20,19 @@ def adjust_image_to_size(original_width, original_height, MAX_WIDTH, MAX_HEIGHT)
     return width, height
 
 def resize_image(img, img_width, img_height):
-    img_resized = transform.resize(img, (img_width, img_height), anti_aliasing=True)
+    img_resized = transform.resize(img, (img_height, img_width), anti_aliasing=True)
     img_resized = 255 * img_resized
     img_resized = img_resized.astype(np.uint8)
     return img_resized
 
 def transform_image_color_to_tuple(img_height, img_width, img):
-    img_frame = utils.get_colorless_array_2d(img_height, img_width)
+    img_frame = utils.get_colorless_array_2d(img_width, img_height)
     for ix,iy,iz in np.ndindex(img.shape):
         img_frame[ix,iy] = utils.array_to_int_tuple(img[ix,iy])
     return img_frame
 
 def center_image_frame(width, height, img):
-    frame = utils.get_colorless_array_2d(height, width)
+    frame = utils.get_colorless_array_2d(width, height)
     start_y = int((frame.shape[0] - img.shape[0]) / 2)
     start_x = int((frame.shape[1] - img.shape[1]) / 2)
     frame[start_y:start_y+img.shape[0], start_x:start_x+img.shape[1]] = img

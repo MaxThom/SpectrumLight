@@ -38,7 +38,7 @@ def get_image_rgb_array():
     image_name = "plane_height_small.png"
     im = io.imread(f'../anim_frames/{image_name}')
     #print(im)
-    #print(np.shape(im))
+    print(np.shape(im))
     print("loading done")
 
     MAX_WIDTH = 24

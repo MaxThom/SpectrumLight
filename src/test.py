@@ -24,7 +24,7 @@ def add_void_layer_2d(arr, init_value=None):
 full = np.zeros((9, 9), dtype=int)
 print(full)
 
-part = np.full((5, 5), 1) 
+part = np.full((2, 5), 1) 
 print(part.shape)
 
 start_y = int((full.shape[0] - part.shape[0]) / 2)
