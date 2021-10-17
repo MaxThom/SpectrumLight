@@ -36,7 +36,10 @@ def init_animation():
 def get_image_rgb_array():
     print("loading")
     image_name = "banana.gif"
-    im = io.imread(f'../anim_frames/{image_name}')
+    #im = io.imread(f'../anim_frames/{image_name}')
+    im = Image.open(f'../anim_frames/{image_name}')
+    im_array = np.asarray(im)
+    print(im_array)
     print(im)
     print(np.shape(im))
     print("loading done")
@@ -44,8 +47,8 @@ def get_image_rgb_array():
     MAX_WIDTH = 24
     MAX_HEIGHT = 48
 
-    original_width = int(im.shape[1])
-    original_height = int(im.shape[0])
+    original_width = int(im.size[1])
+    original_height = int(im.size[0])
     if original_width > original_height:        
         width = int(MAX_WIDTH)
         height = int(original_height / (original_width / MAX_WIDTH))
@@ -60,22 +63,31 @@ def get_image_rgb_array():
             width = int(MAX_WIDTH)
         
         
-   
+    
     print(width, height)
+    im1 = im.resize((width, height), Image.LANCZOS)
+    im1.show()
+    print(im1)
+    im1_array = np.asarray(im1)
+    print(im1_array)
+
+    with open(f'../anim_frames_processed/{image_name}', 'wb') as f:
+        np.save(f, im1_array)
+
     #img_rescaled = transform.rescale(im, 0.16, anti_aliasing=False)
     #print(img_rescaled.shape)
     #print(img_rescaled)
     
-    image_resized = transform.resize(im, (width, height), anti_aliasing=True)
-    print(image_resized.shape)
-    image_resized = 255 * image_resized
-    image_resized = image_resized.astype(np.uint8)
-    print(image_resized)
-
-    #frame = utils.get_colorless_array_2d(self.width, self.height)
-    for ix,iy,iz in np.ndindex(image_resized.shape):
-        image_resized[ix,iy] = tuple(image_resized[ix,iy])
-    print(image_resized)
+    #image_resized = transform.resize(im, (width, height), anti_aliasing=True)
+    #print(image_resized.shape)
+    #image_resized = 255 * image_resized
+    #image_resized = image_resized.astype(np.uint8)
+    #print(image_resized)
+#
+    ##frame = utils.get_colorless_array_2d(self.width, self.height)
+    #for ix,iy,iz in np.ndindex(image_resized.shape):
+    #    image_resized[ix,iy] = tuple(image_resized[ix,iy])
+    #print(image_resized)
     #io.imshow(image_resized)
     #img = Image.fromarray(image_resized, 'RGB')
     #img.show()

@@ -2,6 +2,7 @@ from skimage import io, transform
 import numpy as np
 import os
 import animations.array_utils as utils
+from PIL import Image
 
 def adjust_image_to_size(original_width, original_height, MAX_WIDTH, MAX_HEIGHT):    
     if original_width > original_height:        
@@ -20,10 +21,12 @@ def adjust_image_to_size(original_width, original_height, MAX_WIDTH, MAX_HEIGHT)
     return width, height
 
 def resize_image(img, img_width, img_height):
-    img_resized = transform.resize(img, (img_height, img_width), anti_aliasing=True)
-    img_resized = 255 * img_resized
-    img_resized = img_resized.astype(np.uint8)
-    return img_resized
+    img = img.resize((img_width, img_height))
+    return np.asarray(img)
+    #img_resized = transform.resize(img, (img_height, img_width), anti_aliasing=True)
+    #img_resized = 255 * img_resized
+    #img_resized = img_resized.astype(np.uint8)
+    #return img_resized
 
 def transform_image_color_to_tuple(img_height, img_width, img):
     img_frame = utils.get_colorless_array_2d(img_width, img_height)

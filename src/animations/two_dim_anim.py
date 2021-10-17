@@ -7,6 +7,7 @@ from random import *
 from skimage import io, transform
 import numpy as np
 import os
+from PIL import Image
 
 class TwoDimAnim(__Anim):
     def __init__(self, p_display, p_segment, p_mutex):
@@ -89,6 +90,39 @@ class TwoDimAnim(__Anim):
         # 5. [x] - Load image
         # 6. [x] - Settings frame [image_path, ratio]
         # 7. [] - Make it work for gifs
+
+    def image_display2(self, args):
+        image_name = args["image_name"] if "image_name" in args else "Ninject.png"
+        image_ratio = args["image_ratio"] if "image_ratio" in args else "fit" # or fill
+        img_frame = None
+        processed_image_name = f"{image_name}_{image_ratio}_{self.width}_{self.height}"
+        if os.path.isfile(f'../anim_frames_processed/{processed_image_name}'):
+            with open(f'../anim_frames_processed/{processed_image_name}', 'rb') as f:
+                img_frame = np.load(f, allow_pickle=True)
+        else:
+            # Read and resize image
+            im = Image.open(f'../anim_frames/{image_name}')
+            img = np.asarray(im)
+            img_width, img_height = (None, None)
+            if image_ratio == "fit":
+                img_width, img_height = img_utils.adjust_image_to_size(img.shape[1], img.shape[0], self.width, self.height)
+            elif image_ratio == "fill":
+                img_width, img_height = (self.width, self.height)
+            img_resized = img_utils.resize_image(im, img_width, img_height)
+            
+            # Transform array to tuple
+            img_frame = img_utils.transform_image_color_to_tuple(img_height, img_width, img_resized)
+
+            # Save processed image
+            with open(f'../anim_frames_processed/{processed_image_name}', 'wb') as f:
+                np.save(f, img_frame)
+
+        # Center image
+        frame = img_utils.center_image_frame(self.width, self.height, img_frame)
+        
+        #print(frame)
+        self.__send_frame(frame)
+
 
     #
     # Args: color, wait_ms, reverse
