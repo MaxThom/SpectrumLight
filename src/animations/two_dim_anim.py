@@ -210,7 +210,7 @@ class TwoDimAnim(__Anim):
                     time.sleep(wait_ms)
 
     def __gif_transform(self, gif_frame, image_ratio):
-        im = gif_frame.convert('RGB')                    
+        im = gif_frame.convert('RGBA')                    
         im_array = np.asarray(im)
 
         img_width, img_height = (None, None)
