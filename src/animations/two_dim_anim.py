@@ -49,11 +49,15 @@ class TwoDimAnim(__Anim):
         self.__clear()
 
     #
-    # Args: color, wait_ms, reverse
+    # Args: image_name, image_ratio, frame_time_sec
     #
     def image_display(self, args):
         image_name = args["image_name"] if "image_name" in args else "Ninject.png"
         image_ratio = args["image_ratio"] if "image_ratio" in args else "fit" # or fill
+        if image_name.endswith(".gif"):
+            self.gif_display(args)
+            return
+
         img_frame = None
         processed_image_name = f"{image_name}_{image_ratio}_{self.width}_{self.height}"
         if os.path.isfile(f'../anim_frames_processed/{processed_image_name}'):
@@ -91,9 +95,16 @@ class TwoDimAnim(__Anim):
         # 6. [x] - Settings frame [image_path, ratio]
         # 7. [] - Make it work for gifs
 
+    #
+    # Args: image_name, image_ratio, frame_time_sec
+    #
     def image_display2(self, args):
         image_name = args["image_name"] if "image_name" in args else "Ninject.png"
         image_ratio = args["image_ratio"] if "image_ratio" in args else "fit" # or fill
+        if image_name.endswith(".gif"):
+            self.gif_display(args)
+            return
+
         img_frame = None
         processed_image_name = f"{image_name}_{image_ratio}_{self.width}_{self.height}"
         if os.path.isfile(f'../anim_frames_processed/{processed_image_name}'):
@@ -123,7 +134,49 @@ class TwoDimAnim(__Anim):
         #print(frame)
         self.__send_frame(frame)
 
+    #
+    # Args: image_name, image_ratio, frame_time_sec
+    #
+    def gif_display(self, args):
+        image_name = args["image_name"] if "image_name" in args else "Ninject.png"
+        image_ratio = args["image_ratio"] if "image_ratio" in args else "fit" # or fill
+        frame_time_sec = args["frame_time_sec"] if "frame_time_sec" in args else 0.2
+        gif_frames = []
+        processed_image_name = f"{image_name}_{image_ratio}_{self.width}_{self.height}"
+        if os.path.isfile(f'../anim_frames_processed/{processed_image_name}'):
+            try:
+                with open(f'../anim_frames_processed/{processed_image_name}', 'rb') as f:
+                    while True:
+                        gif_frames.append(np.load(f, allow_pickle=True))
+            except OSError:
+                pass # end of sequence
+        else:
+            # Read and resize image
+            gif = Image.open(f'../anim_frames/{image_name}')
+            try:
+                gif_frames.append(self.__gif_transform(gif, image_ratio))
+                print(gif)
+                while 1:
+                    gif.seek(gif.tell()+1)
+                    gif_frames.append(self.__gif_transform(gif, image_ratio))
+                    print(gif)
+            except EOFError:
+                pass # end of sequence
+            with open(f'../anim_frames_processed/{processed_image_name}', 'wb') as f:
+                for frame in gif_frames:
+                    np.save(f, frame)
 
+        while True:
+            if (self.isCancelled):
+                return
+            for img_frame in gif_frames:
+                # Center image
+                frame = img_utils.center_image_frame(self.width, self.height, img_frame)
+                time.sleep(frame_time_sec)
+                if (self.isCancelled):
+                    return                
+                self.__send_frame(frame)
+        
     #
     # Args: color, wait_ms, reverse
     #
@@ -156,8 +209,21 @@ class TwoDimAnim(__Anim):
                         return
                     time.sleep(wait_ms)
 
-    
+    def __gif_transform(self, gif_frame, image_ratio):
+        im = gif_frame.convert('RGB')                    
+        im_array = np.asarray(im)
 
+        img_width, img_height = (None, None)
+        if image_ratio == "fit":
+            img_width, img_height = img_utils.adjust_image_to_size(im_array.shape[1], im_array.shape[0], self.width, self.height)
+        elif image_ratio == "fill":
+            img_width, img_height = (self.width, self.height)
+
+        img_resized = img_utils.resize_image(im, img_width, img_height)
+        img_frame = img_utils.transform_image_color_to_tuple(img_height, img_width, img_resized)
+
+        return img_frame
+    
     def __wheel(self, pos):
         if pos < 85:
             return (pos * 3, 255 - pos * 3, 0)

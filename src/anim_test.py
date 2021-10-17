@@ -24,7 +24,7 @@ def init_animation():
     print('> Starting LED animation...')
     strip = PixelStrip(LED_COUNT, LED_PIN, LED_FREQ_HZ, LED_DMA, LED_INVERT, LED_BRIGHTNESS, LED_CHANNEL, LED_STRIP)
     strip.begin()
-    get_image_rgb_array()
+    load_gif()
     #color_clear(strip)
     #while True:
     #    color_wipe(strip, Color(255, 0, 0))  # Red wipe
@@ -32,6 +32,36 @@ def init_animation():
     #    color_wipe(strip, Color(0, 0, 255))  # Blue wipe
     #   
     #   #color_wipe(strip, Color(0, 0, 0, 255))  # White wipe
+
+def load_gif():
+    image_name = "banana.gif_fit_24_24"
+    frames = []
+    try:
+        with open(f'../anim_frames_processed/{image_name}', 'rb') as f:
+            while True:
+                frames.append(np.load(f, allow_pickle=True))
+    except OSError:
+        pass # end of sequence
+    print(frames)
+
+def get_image_gif():
+    image_name = "banana.gif"
+    im = Image.open(f'../anim_frames/{image_name}')
+    print(im.n_frames)
+    im_array = np.asarray(im)
+    
+    
+    try:
+        print(im)
+        while 1:
+            im.seek(im.tell()+1)
+            image = im.convert('RGB')
+            image = image.resize((5, 5))
+            print(image)
+            im_array = np.asarray(image)
+            print(im_array)
+    except EOFError:
+        pass # end of sequence
 
 def get_image_rgb_array():
     print("loading")
@@ -71,8 +101,10 @@ def get_image_rgb_array():
     im1_array = np.asarray(im1)
     print(im1_array)
 
-    with open(f'../anim_frames_processed/{image_name}', 'wb') as f:
-        np.save(f, im1_array)
+    
+
+    #with open(f'../anim_frames_processed/{image_name}', 'wb') as f:
+    #    np.save(f, im1_array)
 
     #img_rescaled = transform.rescale(im, 0.16, anti_aliasing=False)
     #print(img_rescaled.shape)
