@@ -86,15 +86,6 @@ class TwoDimAnim(__Anim):
         #print(frame)
         self.__send_frame(frame)
 
-        # Todo
-        # 1. [x] - Make it work for under 48 pixels
-        # 2. [x] - Use better library for loading speed and resize (only if bigger than 48)
-        # 3. [x] - Center image in frame
-        # 4. [x] - Save image
-        # 5. [x] - Load image
-        # 6. [x] - Settings frame [image_path, ratio]
-        # 7. [] - Make it work for gifs
-
     #
     # Args: image_name, image_ratio, frame_time_sec
     #
@@ -112,7 +103,9 @@ class TwoDimAnim(__Anim):
                 img_frame = np.load(f, allow_pickle=True)
         else:
             # Read and resize image
-            im = Image.open(f'../anim_frames/{image_name}')
+            im_load = Image.open(f'../anim_frames/{image_name}')
+            im = im_load.convert('RGBA')
+            print(im)
             img = np.asarray(im)
             img_width, img_height = (None, None)
             if image_ratio == "fit":
@@ -153,6 +146,7 @@ class TwoDimAnim(__Anim):
         else:
             # Read and resize image
             gif = Image.open(f'../anim_frames/{image_name}')
+            print(f"Number of frame: {im.n_frames}")
             try:
                 gif_frames.append(self.__gif_transform(gif, image_ratio))
                 print(gif)
