@@ -224,3 +224,56 @@ TERNATED
  * Running on http://192.168.1.53:80/ (Press CTRL+C to quit)
 192.168.1.105 - - [03/Oct/2021 20:30:36] "GET /api/led/animation/ HTTP/1.1" 200 -
 192.168.1.105 - - [03/Oct/2021 20:30:38] "GET /api/led/animation HTTP/1.1" 200 -
+Hello world !
+Setting configurations from file:
+{
+    "LED_COUNT": 2304,
+    "LED_PIN": 18,
+    "LED_FREQ_HZ": 800000,
+    "LED_DMA": 10,
+    "LED_INVERT": false,
+    "LED_BRIGHTNESS": 20,
+    "LED_CHANNEL": 0,
+    "LED_STRIP": 528384,
+    "LED_WIDTH": 48,
+    "LED_HEIGHT": 48,
+    "LED_LAYOUT": 1
+}
+Started one dimension process thread
+> Command segment
+TERMINATED
+> Command animation
+TERNATED
+ * Serving Flask app 'main' (lazy loading)
+> Command animation
+ * Environment: production
+   WARNING: This is a development server. Do not use it in a production deployment.
+   Use a production WSGI server instead.
+TERNATED
+ * Debug mode: off
+ * Running on all addresses.
+   WARNING: This is a development server. Do not use it in a production deployment.
+ * Running on http://192.168.1.53:80/ (Press CTRL+C to quit)
+192.168.1.105 - - [14/Nov/2021 01:06:35] "GET /api/led/animation HTTP/1.1" 200 -
+192.168.1.105 - - [14/Nov/2021 01:07:03] "POST /api/led/brightness/ HTTP/1.1" 200 -
+192.168.1.105 - - [14/Nov/2021 01:07:12] "POST /api/led/brightness/ HTTP/1.1" 200 -
+192.168.1.105 - - [14/Nov/2021 01:07:48] "GET /api/led/animation HTTP/1.1" 200 -
+192.168.1.105 - - [14/Nov/2021 01:07:58] "GET /api/led/animation HTTP/1.1" 200 -
+192.168.1.105 - - [14/Nov/2021 01:08:10] "GET /api/led/animation HTTP/1.1" 200 -
+192.168.1.105 - - [14/Nov/2021 01:08:23] "GET /api/led/animation HTTP/1.1" 200 -
+192.168.1.105 - - [14/Nov/2021 01:08:29] "GET /api/led/animation HTTP/1.1" 200 -
+192.168.1.105 - - [14/Nov/2021 01:08:37] "GET /api/led/animation HTTP/1.1" 200 -
+192.168.1.105 - - [14/Nov/2021 01:09:02] "GET /api/led/animation HTTP/1.1" 200 -
+Exception in thread Thread-24:
+Traceback (most recent call last):
+  File "/usr/lib/python3.7/threading.py", line 917, in _bootstrap_inner
+    self.run()
+  File "/usr/lib/python3.7/threading.py", line 865, in run
+    self._target(*self._args, **self._kwargs)
+  File "/home/pi/SpectrumLight/src/animations/two_dim_anim.py", line 96, in image_display2
+    self.gif_display(args)
+  File "/home/pi/SpectrumLight/src/animations/two_dim_anim.py", line 149, in gif_display
+    print(f"Number of frame: {im.n_frames}")
+NameError: name 'im' is not defined
+
+192.168.1.105 - - [14/Nov/2021 01:16:51] "POST /api/led/brightness/ HTTP/1.1" 200 -

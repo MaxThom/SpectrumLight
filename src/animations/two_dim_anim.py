@@ -146,7 +146,7 @@ class TwoDimAnim(__Anim):
         else:
             # Read and resize image
             gif = Image.open(f'../anim_frames/{image_name}')
-            print(f"Number of frame: {im.n_frames}")
+            print(f"Number of frame: {gif.n_frames}")
             try:
                 gif_frames.append(self.__gif_transform(gif, image_ratio))
                 print(gif)
