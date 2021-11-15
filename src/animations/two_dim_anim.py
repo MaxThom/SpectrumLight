@@ -148,12 +148,15 @@ class TwoDimAnim(__Anim):
             gif = Image.open(f'../anim_frames/{image_name}')
             print(f"Number of frame: {gif.n_frames}")
             try:
+                i = 1
                 gif_frames.append(self.__gif_transform(gif, image_ratio))
-                print(gif)
+                print(f"{i}: {gif}")                
                 while 1:
+                    i = i + 1
                     gif.seek(gif.tell()+1)
                     gif_frames.append(self.__gif_transform(gif, image_ratio))
-                    print(gif)
+                    print(f"{i}: {gif}")
+                    
             except EOFError:
                 pass # end of sequence
             with open(f'../anim_frames_processed/{processed_image_name}', 'wb') as f:

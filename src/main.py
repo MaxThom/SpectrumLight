@@ -50,7 +50,7 @@ class Main:
             "segment": 0,
             "dimension": 1,
             "configuration": {
-                "wait_ms": 0.005,
+                "wait_ms": 0.035,
                 "count": 15
             }
         }
