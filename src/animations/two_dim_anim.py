@@ -38,9 +38,9 @@ class TwoDimAnim(__Anim):
 
         frame = full_frame.flatten()
         #print("locked")
-        if self.mutex.acquire():
+        #if self.mutex.acquire():
         #print("unlocked")
-            self.display.send_frame(frame)
+        self.display.send_frame(frame)
 
     def __clear(self):
         self.__send_frame(utils.get_colorless_array_2d(self.width, self.height))

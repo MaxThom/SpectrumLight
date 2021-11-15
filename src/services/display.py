@@ -48,10 +48,10 @@ class Display():
 
     def __refresh_strip_frame(self):
         while not self.CancelRefresh:
-            for mutex in self.anim_mutexes:
-                if mutex.locked():
-                    mutex.release()
-            time.sleep(0.001)
+            #for mutex in self.anim_mutexes:
+            #    if mutex.locked():
+            #        mutex.release()
+            time.sleep(0.05)
             #start = time.time()
             self.strip.show()
             #end = time.time()

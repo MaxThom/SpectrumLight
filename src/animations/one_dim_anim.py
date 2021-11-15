@@ -27,9 +27,9 @@ class OneDimAnim(__Anim):
         full_frame = [None] * 5 + [(12, 12, 12), (12, 12, 12), (12, 12, 12)] + [None] * 5
 
         #print("locked")
-        if self.mutex.acquire():
+        #if self.mutex.acquire():
         #    print("unlocked")
-            self.display.send_frame([None] * self.start_index + frame)
+        self.display.send_frame([None] * self.start_index + frame)
 
     def __clear(self):
         self.__send_frame(utils.get_colorless_array_1d(self.length))
